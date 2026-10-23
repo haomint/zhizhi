@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-23",
+  "version": "0.7.0",
+  "unitTests": {"passed": 9, "model": "mock"},
+  "uiRegression": "passed: work/verify_pocket_ui.cjs",
+  "browser": {"viewport": "390x844", "piLoop": "passed with mock model", "readingAndReload": "passed", "pageErrors": 0},
+  "environmentDoctor": "passed",
+  "androidBuild": "passed",
+  "apkVerification": "apk-verification.json",
+  "realModel": "not_tested",
+  "phoneInstall": "not_tested",
+  "phoneUpgrade": "blocked: original 0.6.1 signing key unavailable; delivery uses separate debug application ID",
+  "retrieval": "not_configured"
+}

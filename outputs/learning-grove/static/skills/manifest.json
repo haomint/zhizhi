@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.0",
+  "base": "agent",
+  "activeStages": [
+    "intake",
+    "roadmap",
+    "cards",
+    "tutor"
+  ],
+  "preparedStages": [
+    "knowledge",
+    "page-plan",
+    "quality",
+    "settlement",
+    "reinforcement"
+  ],
+  "references": [
+    "math",
+    "history"
+  ],
+  "skills": {
+    "agent": {
+      "file": "agent.md",
+      "version": "1.0.0"
+    },
+    "intake": {
+      "file": "intake.md",
+      "version": "1.0.0"
+    },
+    "roadmap": {
+      "file": "roadmap.md",
+      "version": "1.0.0"
+    },
+    "cards": {
+      "file": "cards.md",
+      "version": "1.0.0"
+    },
+    "tutor": {
+      "file": "tutor.md",
+      "version": "1.0.0"
+    },
+    "knowledge": {
+      "file": "knowledge.md",
+      "version": "1.0.0"
+    },
+    "page-plan": {
+      "file": "page-plan.md",
+      "version": "1.0.0"
+    },
+    "quality": {
+      "file": "quality.md",
+      "version": "1.0.0"
+    },
+    "settlement": {
+      "file": "settlement.md",
+      "version": "1.0.0"
+    },
+    "reinforcement": {
+      "file": "reinforcement.md",
+      "version": "1.0.0"
+    },
+    "math": {
+      "file": "math.md",
+      "version": "1.0.0"
+    },
+    "history": {
+      "file": "history.md",
+      "version": "1.0.0"
+    }
+  },
+  "tools": {
+    "read_learning_context": "active",
+    "read_learning_memory": "active-task-snapshot",
+    "read_materials": "active-provided-only",
+    "search_resources": "not-configured"
+  },
+  "limits": {
+    "requests": 4,
+    "toolCalls": 6,
+    "timeoutMs": 150000,
+    "nodesPerBatch": 1,
+    "pagesPerNode": 8,
+    "automaticRetries": 0
+  }
+}

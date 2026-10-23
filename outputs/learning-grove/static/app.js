@@ -16,7 +16,8 @@ const currentTree = () => state?.trees.find(t => t.id === route()[1]);
 const currentNode = () => {const t = currentTree(); return t?.nodes.find(n => n.id === route()[2]) || t?.nodes.find(n=>n.id===t.current_node_id) || t?.nodes.find(n => n.status === 'learning') || t?.nodes[0];};
 const go = hash => {if(location.hash === '#' + hash) render(); else location.hash = hash;};
 function toast(text) {clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').classList.add('visible');toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),6500);}
-function setBusy(value) {busy=value;document.querySelectorAll('button').forEach(b=>{if(value){b.dataset.wasDisabled=String(b.disabled);b.disabled=true;}else if(b.dataset.wasDisabled!==undefined){b.disabled=b.dataset.wasDisabled==='true';delete b.dataset.wasDisabled;}});$('#save-status').textContent=value?'正在处理…':'已保存至本机';const hint=$('#reader-save-state');if(hint)hint.textContent=value?'正在处理，请稍等…':'阅读位置自动保存在本机';}
+const canReadWhileBusy=b=>['page','advance','select-node','toggle-question','close-modal'].includes(b.dataset.action);
+function setBusy(value) {busy=value;document.querySelectorAll('button').forEach(b=>{if(value&&!canReadWhileBusy(b)){b.dataset.wasDisabled=String(b.disabled);b.disabled=true;}else if(b.dataset.wasDisabled!==undefined){b.disabled=b.dataset.wasDisabled==='true';delete b.dataset.wasDisabled;}});$('#save-status').textContent=value?'正在处理…':'已保存至本机';const hint=$('#reader-save-state');if(hint)hint.textContent=value?'正在准备内容，可继续阅读已保存卡片':'阅读位置自动保存在本机';}
 function modelBadge(){
   if(!config)return;
   const name=config.provider==='deepseek'?'DeepSeek':'模型服务';
@@ -26,18 +27,19 @@ function modelBadge(){
 }
 function connectionResult(text,kind='wait') {const el=$('#connection-result');if(el){el.textContent=text;el.className='connection-result '+kind;}}
 async function act(data, redraw = true) {
-  if(busy) return null;
-  setBusy(true);
+  const reading=['visit','set_page','advance'].includes(data.type);
+  if(busy&&!reading) return null;
+  if(!reading)setBusy(true);
   try {
-    const response=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(120000)});
+    const response=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(160000)});
     const result=await response.json();
     if(result.settings){config=result.settings;modelBadge();}
     if(!response.ok)throw Error((result.settings_saved?'设置已保存，但连接测试未通过：':'')+(result.error || '操作没有完成，请重试。'));
-    state=result.state;config=result.settings;
+    if(!state||(result.state.revision||0)>=(state.revision||0))state=result.state;config=result.settings;
     if(redraw)render();
     return result;
   } catch(error) {let message=error.name==='TimeoutError'?'等待模型超时。请稍后刷新查看，避免重复提交。':error.message;if(error.name==='TypeError')message='本地服务暂时没有连接，请重新运行“启动知枝.cmd”，再刷新页面。';toast(message);if(data.type==='configure_test'||data.type==='configure')connectionResult(message,'error');return null;}
-  finally {setBusy(false);}
+  finally {if(!reading)setBusy(false);}
 }
 function modal(title, html) {$('#modal-content').innerHTML=`<div class="modal-top"><h2>${esc(title)}</h2><button data-action="close-modal" aria-label="关闭">×</button></div>${html}`;$('#modal').showModal();}
 function closeModal() {$('#modal').close();}
@@ -82,7 +84,7 @@ function render() {
   document.body.classList.toggle('garden-shell',['home','library','profile','memories'].includes(page));
   document.querySelector('#garden-nav')?.remove();
   if(['home','library','profile','memories'].includes(page))document.querySelector('.main-shell').insertAdjacentHTML('beforeend',gardenNav(page==='memories'?'profile':page));
-  if(busy)document.querySelectorAll('#main button').forEach(b=>{b.dataset.wasDisabled=String(b.disabled);b.disabled=true;});
+  if(busy)document.querySelectorAll('#main button').forEach(b=>{if(!canReadWhileBusy(b)){b.dataset.wasDisabled=String(b.disabled);b.disabled=true;}});
 }
 function gardenNav(page){return `<nav id="garden-nav" aria-label="底部导航">${[['home','主页','tree'],['library','学习库','book'],['profile','个人','settings']].map(([id,label,glyph])=>`<a href="#${id}" class="${page===id?'active':''}" ${page===id?'aria-current="page"':''}>${icon(glyph,23)}<span>${label}</span></a>`).join('')}</nav>`;}
 function renderHome(){
@@ -202,7 +204,7 @@ async function completeNode(skip=false) {
 }
 document.addEventListener('click',event=>{if(event.target.closest('a[href^="#"]'))keepReaderPosition();},true);
 document.addEventListener('click', async event=>{
-  const b=event.target.closest('[data-action]');if(!b||b.disabled||busy)return;
+  const b=event.target.closest('[data-action]');if(!b||b.disabled||(busy&&!canReadWhileBusy(b)))return;
   const action=b.dataset.action,t=currentTree(),n=currentNode();
   document.querySelectorAll('.pocket-menu[open]').forEach(menu=>menu.open=false);
   if(action==='new')go('new');
@@ -214,7 +216,7 @@ document.addEventListener('click', async event=>{
   else if(action==='advance')await advanceReading();
   else if(action==='toggle-question'){const section=$('#reader-question');section.open=!section.open;if(section.open){questionOpen.add(contextKey());section.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});}else{section.dataset.manualClose='1';questionOpen.delete(contextKey());window.scrollTo({top:0,behavior:'smooth'});}}
   else if(action==='generate-node'){const r=await act({type:'refill',tree_id:t.id,node_id:n.id});if(r&&n.status==='unseen')await act({type:'status',tree_id:t.id,node_id:n.id,status:'learning'});}
-  else if(action==='refill'){const r=await act({type:'refill',tree_id:t.id});if(r)toast('已按当前进度准备卡片；待学习余量充足时不会重复生成。');}
+  else if(action==='refill'){const r=await act({type:'refill',tree_id:t.id});if(r)toast('已准备下一段内容。');}
   else if(action==='complete')await completeNode(false);
   else if(action==='skip')await completeNode(true);
   else if(action==='restart-node')await act({type:'status',tree_id:t.id,node_id:n.id,status:'learning'});
@@ -274,4 +276,4 @@ window.addEventListener('pagehide',keepReaderPosition);
 document.addEventListener('pointerdown',event=>{const control=event.target.closest('button,.round-control,.ask-pill,a.primary,summary');if(!control||control.disabled||matchMedia('(prefers-reduced-motion: reduce)').matches)return;control.classList.remove('jelly-tap');void control.offsetWidth;control.classList.add('jelly-tap');control.addEventListener('animationend',()=>control.classList.remove('jelly-tap'),{once:true});});
 
 $('#modal').addEventListener('click',event=>{if(event.target===$('#modal')){const rect=$('#modal').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)closeModal();}});
-fetch('/api/state').then(async r=>{if(!r.ok)throw Error('无法读取本机学习资料。');return r.json();}).then(result=>{state=result.state;config=result.settings;render();if(route()[0]==='tree')restoreReaderPosition();}).catch(error=>{$('#main').textContent=error.message+' 请确认本地服务已经启动，然后刷新。';});
+fetch('/api/state').then(async r=>{if(!r.ok)throw Error('无法读取本机学习资料。');return r.json();}).then(result=>{if(!state||(result.state.revision||0)>=(state.revision||0))state=result.state;config=result.settings;render();if(route()[0]==='tree')restoreReaderPosition();}).catch(error=>{$('#main').textContent=error.message+' 请确认本地服务已经启动，然后刷新。';});

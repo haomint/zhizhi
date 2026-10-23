@@ -269,6 +269,6 @@ Pi 技术验证须先锁定依赖版本并实际打包到 Capacitor：验证 Web
 
 - 本会话：需求模拟，以及漏答、多选、积极性、核心与辅助信息的修正规则。
 - [Pi 可行性讨论](mention://agent-session/8356554f-cd75-40ae-a3ba-3efc21df9bab?roomId=9abf47b0-6af4-48e1-8b0c-a9632e727e37)：已读取当时可见的八轮讨论。另一会话的总结交付当时仍在进行，本文不宣称包含其之后的全部更新。
-- [MVP 方案对比与推荐](/workspace/三创赛知枝/outputs/知枝-MVP方案对比与推荐.md)：单 Agent、Core 候选、三层规则与数据边界的组合建议。
+- 《MVP 方案对比与推荐》（历史内容见 Git 标签 pre-integration-20261023）：单 Agent、Core 候选、三层规则与数据边界的组合建议。
 - [当前源码说明](/workspace/三创赛知枝/outputs/learning-grove/SOURCE-GUIDE.md)、[需求规则](/workspace/三创赛知枝/outputs/learning-grove/skills/intake.md)、[移动业务层](/workspace/三创赛知枝/outputs/learning-grove/static/mobile-service.js)、[安卓桥接](/workspace/三创赛知枝/outputs/learning-grove/android/app/src/main/java/app/zhizhi/personal/PersonalPlugin.java)：当前实现依据。
 - [Pi Agent Core 官方说明](https://github.com/earendil-works/pi/blob/main/packages/agent/README.md)、[Pi SDK 官方说明](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/sdk.md)：2026-10-23 查阅。本文的教学状态、字段、工具名和预算是知枝设计建议，不是 Pi 保证或 API 声明；正式实现应锁版本复核。

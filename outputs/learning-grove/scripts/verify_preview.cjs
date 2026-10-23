@@ -1,0 +1,9 @@
+const {chromium}=require('/usr/local/lib/node_modules/playwright');
+const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://localhost:5175/');await page.locator('[data-action="demo"]').click();await page.waitForSelector('.pocket-reader');
+assert((await page.locator('.pocket-heading strong').textContent()).includes('函数'));
+await page.locator('[data-action="page"]').last().click();await page.waitForTimeout(100);const before=await page.evaluate(async()=>{const r=await fetch('/api/state');return (await r.json()).state.trees[0].nodes[0].page;});assert.equal(before,1);
+await page.reload();await page.waitForSelector('.pocket-reader');const after=await page.evaluate(async()=>{const r=await fetch('/api/state');return (await r.json()).state.trees[0].nodes[0].page;});assert.equal(after,1);
+assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
+const proof=await page.evaluate(async()=>{let n=0;return window.ZhizhiPi.runStage({stage:'intake',context:{messages:[{role:'user',content:'函数'}]},system:'仅测试',request:async()=>++n===1?{choices:[{finish_reason:'tool_calls',message:{tool_calls:[{id:'browser1',type:'function',function:{name:'read_learning_context',arguments:'{}'}}]}}]}:{choices:[{finish_reason:'stop',message:{content:JSON.stringify({title:'函数',goal:'理解',questions:[]})}}]}});});assert.equal(proof.audit.toolCalls,1);
+console.log(JSON.stringify({mobileLayout:true,persistence:true,browserPiLoop:true,model:'mock',errors},null,2));await browser.close();})().catch(e=>{console.error(e);process.exit(1)});

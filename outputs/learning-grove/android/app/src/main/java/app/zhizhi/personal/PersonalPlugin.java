@@ -14,6 +14,55 @@ import org.json.*;
 
 @CapacitorPlugin(name="Personal")
 public class PersonalPlugin extends Plugin {
+    private final java.util.concurrent.atomic.AtomicBoolean busy=new java.util.concurrent.atomic.AtomicBoolean(false);
+    private final java.util.concurrent.ConcurrentHashMap<String, RequestState> requests=new java.util.concurrent.ConcurrentHashMap<>();
+    private static class RequestState { volatile HttpURLConnection conn; volatile boolean cancelled=false; }
+    @PluginMethod public void cancel(PluginCall call){
+        RequestState state=requests.get(call.getString("requestId",""));
+        if(state!=null){state.cancelled=true;if(state.conn!=null)state.conn.disconnect();}
+        call.resolve();
+    }
+    @PluginMethod public void complete(PluginCall call){
+        String requestId=call.getString("requestId","");JSObject supplied=call.getObject("payload");
+        if(requestId.isEmpty()||requestId.length()>80||supplied==null||supplied.toString().length()>120000){call.reject("请求格式不正确或上下文过长。");return;}
+        final JSONObject payload;
+        try {
+            payload=new JSONObject(supplied.toString());
+            String model=payload.getString("model");if(!model.matches("[a-zA-Z0-9_.:-]{1,100}"))throw new Exception();
+            JSONArray messages=payload.getJSONArray("messages");if(messages.length()<1||messages.length()>32)throw new Exception();
+            JSONArray tools=payload.getJSONArray("tools");if(tools.length()>3)throw new Exception();
+            for(int i=0;i<tools.length();i++){String name=tools.getJSONObject(i).getJSONObject("function").getString("name");if(!java.util.Arrays.asList("read_learning_context","read_learning_memory","read_materials").contains(name))throw new Exception();}
+            payload.put("stream",false).put("max_tokens",6000).put("thinking",new JSONObject().put("type","disabled"));
+        }catch(Exception e){call.reject("模型消息或工具定义格式无效。");return;}
+        if(!busy.compareAndSet(false,true)){call.reject("上一个网络请求尚未结束，请稍后重试。");return;}
+        RequestState state=new RequestState();requests.put(requestId,state);
+        getBridge().execute(()->{
+            try {
+                String token=key();if(token.isEmpty()){call.reject("请先加密保存自己的 DeepSeek API Key。");return;}
+                if(state.cancelled){call.reject("已取消。");return;}
+                HttpURLConnection conn=(HttpURLConnection)new URL("https://api.deepseek.com/chat/completions").openConnection();state.conn=conn;
+                conn.setInstanceFollowRedirects(false);conn.setConnectTimeout(15000);conn.setReadTimeout(65000);
+                conn.setRequestMethod("POST");conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type","application/json");conn.setRequestProperty("Authorization","Bearer "+token);
+                if(state.cancelled){call.reject("已取消。");return;}
+                try(java.io.OutputStream out=conn.getOutputStream()){out.write(payload.toString().getBytes(StandardCharsets.UTF_8));}
+                int code=conn.getResponseCode();
+                if(code!=200){call.reject(code==401?"API Key 无效（401）。":code==402?"API 账户余额不足（402）。":code==404?"模型或接口不存在（404），请检查模型名称。":code==429?"请求限流（429），请稍后重试。":"DeepSeek 请求失败（HTTP "+code+"）。");return;}
+                String body;
+                try(java.io.InputStream in=conn.getInputStream();java.io.ByteArrayOutputStream buffer=new java.io.ByteArrayOutputStream()){
+                    byte[] chunk=new byte[8192];int n;
+                    while((n=in.read(chunk))!=-1){if(state.cancelled)throw new java.io.IOException();buffer.write(chunk,0,n);if(buffer.size()>1000000)throw new java.io.IOException();}
+                    body=buffer.toString(StandardCharsets.UTF_8.name());
+                }
+                if(state.cancelled){call.reject("已取消。");return;}
+                JSObject response=new JSObject(body);if(!response.has("choices"))throw new Exception("Missing choices");
+                call.resolve(response);
+            }catch(java.net.SocketTimeoutException e){call.reject("网络请求超时，已保存结果仍保留，请重试。");}
+            catch(Exception e){call.reject(state.cancelled?"已取消。":"网络或返回格式异常，请检查网络后重试。");}
+            finally{if(state.conn!=null)state.conn.disconnect();requests.remove(requestId);busy.set(false);}
+        });
+    }
+
     private javax.crypto.SecretKey secret() throws Exception {
         KeyStore store=KeyStore.getInstance("AndroidKeyStore"); store.load(null);
         if(!store.containsAlias("zhizhi-api")) {
@@ -82,4 +131,5 @@ public class PersonalPlugin extends Plugin {
             finally{if(conn!=null)conn.disconnect();}
         });
     }
+    @Override protected void handleOnDestroy(){for(RequestState state:requests.values()){state.cancelled=true;if(state.conn!=null)state.conn.disconnect();}super.handleOnDestroy();}
 }

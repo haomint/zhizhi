@@ -1,0 +1,16 @@
+import { fileURLToPath } from 'node:url';
+import { build } from 'esbuild';
+import { readFile, writeFile, cp } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+process.chdir(fileURLToPath(new URL('.', import.meta.url)));
+execFileSync(process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3'), ['prepare-mobile.py'], { stdio: 'inherit' });
+const result = await build({ entryPoints: ['src/browser.mjs'], outfile: 'static/pi-runtime.js', platform: 'browser', format: 'iife', bundle: true, target: ['chrome110'], minify: true, metafile: true, legalComments: 'eof' });
+if (!Object.keys(result.metafile.inputs).some(p => p.includes('pi-agent-core/dist/agent-loop.js'))) throw Error('Pi loop missing from bundle');
+await cp('LICENSES', 'static/licenses', { recursive: true });
+await cp('THIRD-PARTY-NOTICES.md', 'static/THIRD-PARTY-NOTICES.md');
+const files = ['pi-runtime.js', 'mobile-service.js', 'skills/manifest.json'];
+const hashes = {};
+for (const f of files) hashes[f] = createHash('sha256').update(await readFile('static/' + f)).digest('hex');
+await writeFile('static/build-info.json', JSON.stringify({ version: '0.7.0', piVersion: '1.4.0', actualPiCoreBundled: true, hashes }, null, 2));
+console.log('Pi runtime and manifest-driven resources built.');

@@ -1,0 +1,11 @@
+{
+  "version": "0.7.0",
+  "apkSha256": "bace810e24cce9b79b5e7b77d1bbfdbf2de12725584ba1d87b8345c009f9b0f6",
+  "apkBytes": 4254259,
+  "assetsCompared": 30,
+  "signatureVerified": true,
+  "sameCertificateAs061": false,
+  "installation": "side-by-side; no automatic data or key migration",
+  "certificateSha256": "45820da604a10463839133aa821583db96cb0706ebe9e5d7386a0431e3472691",
+  "package": "package: name='app.zhizhi.personal.integration' versionCode='3' versionName='0.7.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'"
+}

@@ -1,0 +1,13 @@
+{
+  "model": {
+    "provider": "deepseek",
+    "baseUrl": "https://api.deepseek.com",
+    "defaultModel": "deepseek-flash",
+    "keyStorage": "Android Keystore; no key in config"
+  },
+  "retrieval": {
+    "provider": "none",
+    "enabled": false,
+    "reason": "尚未选定真实检索服务；仅支持任务提供的材料"
+  }
+}

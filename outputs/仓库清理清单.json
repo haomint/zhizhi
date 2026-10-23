@@ -1,0 +1,222 @@
+{
+  "baselineTag": "pre-integration-20261023",
+  "deleted": [
+    {
+      "path": "outputs/学习助手-MVP构想基线.md",
+      "bytes": 5495
+    },
+    {
+      "path": "outputs/知枝-MVP方案对比与推荐.md",
+      "bytes": 16460
+    },
+    {
+      "path": "outputs/知枝-内部运行逻辑.md",
+      "bytes": 11080
+    },
+    {
+      "path": "outputs/知枝-讨论总结与决策记录.md",
+      "bytes": 14039
+    },
+    {
+      "path": "outputs/知枝私人学习助手项目方案.md",
+      "bytes": 14312
+    },
+    {
+      "path": "outputs/知枝私人学习助手项目方案.docx",
+      "bytes": 46445
+    },
+    {
+      "path": "outputs/知枝-0.3-Windows便携版.zip",
+      "bytes": 11474445
+    },
+    {
+      "path": "outputs/知枝-0.3-使用说明.txt",
+      "bytes": 2386
+    },
+    {
+      "path": "outputs/知枝-0.3-界面预览",
+      "bytes": 222189
+    },
+    {
+      "path": "outputs/知枝-项目源码.zip",
+      "bytes": 394241
+    },
+    {
+      "path": "work/portable-03",
+      "bytes": 22782790
+    },
+    {
+      "path": "work/proposal-render",
+      "bytes": 3079758
+    },
+    {
+      "path": "work/ui-before-03",
+      "bytes": 57175
+    },
+    {
+      "path": "work/python-3.13.16-embed-amd64.zip",
+      "bytes": 11439094
+    },
+    {
+      "path": "work/策划案历史",
+      "bytes": 53760
+    },
+    {
+      "path": "work/策划案整合",
+      "bytes": 64
+    },
+    {
+      "path": "work/build_phone_preview.py",
+      "bytes": 2601
+    },
+    {
+      "path": "work/build_project_proposal.py",
+      "bytes": 8340
+    },
+    {
+      "path": "work/compat-launch.ps1",
+      "bytes": 240
+    },
+    {
+      "path": "work/package_portable.py",
+      "bytes": 5730
+    },
+    {
+      "path": "work/package_source.py",
+      "bytes": 1806
+    },
+    {
+      "path": "work/polish_content.py",
+      "bytes": 2417
+    },
+    {
+      "path": "work/project_proposal_content.json",
+      "bytes": 16279
+    },
+    {
+      "path": "work/readme-current.md",
+      "bytes": 4175
+    },
+    {
+      "path": "work/redesign_ui.py",
+      "bytes": 20882
+    },
+    {
+      "path": "work/render_proposal_checked.py",
+      "bytes": 1284
+    },
+    {
+      "path": "work/render_proposal_word.ps1",
+      "bytes": 1154
+    },
+    {
+      "path": "work/styles-03.css",
+      "bytes": 34106
+    },
+    {
+      "path": "work/tidy_personal.py",
+      "bytes": 1921
+    },
+    {
+      "path": "work/tidy_reader.py",
+      "bytes": 2010
+    },
+    {
+      "path": "work/update_garden.py",
+      "bytes": 3249
+    },
+    {
+      "path": "work/update_reader.py",
+      "bytes": 11272
+    },
+    {
+      "path": "work/原启动文件备份.cmd",
+      "bytes": 124
+    },
+    {
+      "path": "work/integrate_runtime.py",
+      "bytes": 3268
+    },
+    {
+      "path": "work/integrate_skills.py",
+      "bytes": 9281
+    },
+    {
+      "path": "work/integrate_mobile.py",
+      "bytes": 4130
+    },
+    {
+      "path": "work/pi-probe-tools/cmdtools.zip",
+      "bytes": 181052239
+    },
+    {
+      "path": "work/pi-probe-tools/jdk.tar.gz",
+      "bytes": 206564406
+    },
+    {
+      "path": "work/pi-probe-tools/sdk-unpack",
+      "bytes": 0
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/README.md",
+      "bytes": 4987
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/.runtime",
+      "bytes": 22640611
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/launch.py",
+      "bytes": 4665
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/model_service.py",
+      "bytes": 12439
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/停止知枝.cmd",
+      "bytes": 240
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/先读我-使用说明.txt",
+      "bytes": 2386
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/runtime_info.py",
+      "bytes": 263
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/server.py",
+      "bytes": 29411
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/skills",
+      "bytes": 4118
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/launch.ps1",
+      "bytes": 1286
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/启动知枝.cmd",
+      "bytes": 231
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/static",
+      "bytes": 81614
+    },
+    {
+      "path": "work/便携验收 空格 & 中文/知枝-0.3-Windows便携版/release-info.json",
+      "bytes": 349
+    }
+  ],
+  "bytesFreed": 460147247,
+  "preserved": [
+    "所有本地 data/数据库",
+    "Android 签名与已安装工具链",
+    "独立 Pi 验证项目",
+    "原型网站 HTML",
+    "0.6.1 与 Pi 0.1.0 安装包"
+  ],
+  "restore": "文本源码及文档可从 Git 基线恢复；重复压缩包、已解压安装器与工具副本不存入 Git。"
+}
