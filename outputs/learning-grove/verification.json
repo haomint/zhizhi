@@ -1,14 +1,14 @@
 {
   "date": "2026-10-23",
-  "version": "0.7.0",
-  "unitTests": {"passed": 9, "model": "mock"},
-  "uiRegression": "passed: work/verify_pocket_ui.cjs",
-  "browser": {"viewport": "390x844", "piLoop": "passed with mock model", "readingAndReload": "passed", "pageErrors": 0},
+  "version": "1.0.0",
+  "unitTests": {"passed": 20, "realPiLoop": true, "modelTransport": "simulated; no real API key used"},
+  "coverage": ["source-backed pipeline", "quality retry limit", "source reference validation", "short writes during generation", "stale result rejection", "cancellation", "interrupted task recovery", "settlement deduplication", "memory redaction", "voluntary reinforcement and version evidence", "route acceptance", "archive merge/replace/rollback"],
+  "browser": {"viewport": "390x844", "materials": "passed", "reinforcement": "passed with fixed demo", "orangeEvidence": "passed", "feedback": "passed", "settlement": "passed", "archiveImport": "passed", "reload": "passed", "pageErrors": 0, "horizontalOverflow": false},
+  "retrieval": {"provider": "zh.wikipedia.org", "liveHttp": 200, "browserBusinessAction": "passed; 3 actual extracts saved"},
   "environmentDoctor": "passed",
   "androidBuild": "passed",
   "apkVerification": "apk-verification.json",
   "realModel": "not_tested",
   "phoneInstall": "not_tested",
-  "phoneUpgrade": "blocked: original 0.6.1 signing key unavailable; delivery uses separate debug application ID",
-  "retrieval": "not_configured"
+  "phoneUpgrade": "0.7 identity and signature match checked in APK; actual device update pending; 0.6.1 uses archive migration"
 }

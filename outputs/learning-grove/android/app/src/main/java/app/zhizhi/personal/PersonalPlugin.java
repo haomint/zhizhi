@@ -17,6 +17,25 @@ public class PersonalPlugin extends Plugin {
     private final java.util.concurrent.atomic.AtomicBoolean busy=new java.util.concurrent.atomic.AtomicBoolean(false);
     private final java.util.concurrent.ConcurrentHashMap<String, RequestState> requests=new java.util.concurrent.ConcurrentHashMap<>();
     private static class RequestState { volatile HttpURLConnection conn; volatile boolean cancelled=false; }
+    @PluginMethod public void searchMaterials(PluginCall call){
+        String query=call.getString("query", "").trim();
+        if(query.isEmpty()||query.length()>160){call.reject("检索词需要 1—160 字。");return;}
+        getBridge().execute(()->{
+            HttpURLConnection conn=null;
+            try {
+                String encoded=java.net.URLEncoder.encode(query,"UTF-8");
+                String address="https://zh.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=0&gsrlimit=3&prop=extracts&exintro=1&explaintext=1&exlimit=3&exchars=1200&gsrsearch="+encoded;
+                conn=(HttpURLConnection)new URL(address).openConnection();conn.setInstanceFollowRedirects(false);conn.setConnectTimeout(12000);conn.setReadTimeout(20000);
+                conn.setRequestProperty("User-Agent","ZhizhiLearning/1.0 (personal educational Android application)");
+                if(conn.getResponseCode()!=200){call.reject("百科服务暂不可用，请换关键词或导入文字材料。");return;}
+                try(java.io.InputStream in=conn.getInputStream();java.io.ByteArrayOutputStream buffer=new java.io.ByteArrayOutputStream()){
+                    byte[] chunk=new byte[8192];int n;while((n=in.read(chunk))!=-1){buffer.write(chunk,0,n);if(buffer.size()>250000)throw new Exception();}
+                    call.resolve(new JSObject(buffer.toString("UTF-8")));
+                }
+            }catch(Exception e){call.reject("资料检索失败，请检查网络或导入文字材料。");}
+            finally{if(conn!=null)conn.disconnect();}
+        });
+    }
     @PluginMethod public void cancel(PluginCall call){
         RequestState state=requests.get(call.getString("requestId",""));
         if(state!=null){state.cancelled=true;if(state.conn!=null)state.conn.disconnect();}

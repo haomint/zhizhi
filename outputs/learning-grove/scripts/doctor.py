@@ -12,5 +12,5 @@ checks['skillCopies']=all((root/'static/skills'/v['file']).exists() and (root/'s
 if java and java.exists():
  version=subprocess.run([str(java),'-version'],capture_output=True,text=True)
  checks['jdk21']=version.returncode==0 and '"21.' in version.stderr
-print(json.dumps({'checks':checks,'search':'not_configured','realApi':'not_tested','phoneUpgrade':'not_tested'},ensure_ascii=False,indent=2))
+print(json.dumps({'checks':checks,'search':'wikipedia-zh; no extra API key','realApi':'not_tested','phoneUpgrade':'same application ID as 0.7; device test pending'},ensure_ascii=False,indent=2))
 raise SystemExit(0 if all(checks.values()) else 1)

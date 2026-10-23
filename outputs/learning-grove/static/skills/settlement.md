@@ -1,2 +1,1 @@
-只结算输入事件范围内新增事实。返回 {"event_range":{"after":"","through":""},"observations":[{"content":"","event_ids":[],"scope":""}],"strategy_proposals":[{"change":"","reason":"","event_ids":[]}]}。
-不问用户额外问卷，不把看过算掌握。不重复提取已处理事件，不复活已删除/纠正记忆。证据不足不更新；个人策略与通用 skill 分开。实际水位、去重、失效与提交由程序校验后执行，当前规则不等于该机制已接入。
+只结算输入事件范围。返回 {"event_range":{"after":0,"through":1},"observations":[],"strategy_proposals":[{"change":"适用于此情境的讲解策略","reason":"为何调整","event_ids":[]}]}。event_range 数值原样使用。最多三条策略，必须引用输入中 feedback 或 preference 的真实事件 ID；不依据一次提问、阅读、练习成绩推定用户长期偏好。无明确证据则空数组。不重复提取、不复活删除信息、不修改通用 skill。

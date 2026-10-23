@@ -25,6 +25,31 @@ export function validateResult(stage, result, context = {}) {
   } else if (stage === 'tutor') {
     requireValue(text(result.answer, 5000) && Array.isArray(result.memories) && result.memories.length <= 2, '答疑格式无效');
     for (const m of result.memories) requireValue(text(m.content, 900) && ['用户明确表达', '助手暂时推测'].includes(m.source), '记忆缺少来源');
-  } else throw Error('阶段尚未接入业务校验：' + stage);
+  } else if (stage === 'knowledge') {
+    requireValue(['ready','blocked'].includes(result.decision)&&Array.isArray(result.claims)&&result.claims.length<=16&&Array.isArray(result.gaps), '知识整理格式无效');
+    const ids=new Set((context.materials||[]).map(m=>m.id));const seen=new Set();
+    for(const c of result.claims){requireValue(text(c.id,100)&&!seen.has(c.id)&&text(c.text,1500)&&['supported','uncertain'].includes(c.status)&&Array.isArray(c.material_ids)&&c.material_ids.every(id=>ids.has(id)), '要点引用了不存在的材料或格式无效');seen.add(c.id);if(c.status==='supported')requireValue(c.material_ids.length>0,'有依据的要点必须引用材料');}
+    for(const g of result.gaps)requireValue(text(g.question,500)&&typeof g.critical==='boolean','知识缺口格式无效');
+    if(result.decision==='ready')requireValue(result.claims.length>0&&result.claims.every(c=>c.status==='supported')&&!result.gaps.some(g=>g.critical),'仍有核心不确定性，不能进入正文生成');
+  } else if (stage === 'page-plan') {
+    requireValue(result.node_id===context.node_id&&Array.isArray(result.pages)&&result.pages.length>=2&&result.pages.length<=8&&Array.isArray(result.uncovered_claim_ids),'页序格式无效');
+    const claims=new Set(context.knowledge.claims.map(c=>c.id));const covered=new Set();
+    for(const p of result.pages){requireValue(text(p.purpose,500)&&Array.isArray(p.claim_ids)&&p.claim_ids.every(x=>claims.has(x)),'页序引用无效');p.claim_ids.forEach(x=>covered.add(x));}
+    requireValue([...claims].every(x=>covered.has(x)||result.uncovered_claim_ids.includes(x)),'页序遗漏要点且未说明');
+  } else if (stage === 'quality') {
+    requireValue(['pass','revise','blocked'].includes(result.decision)&&Array.isArray(result.issues)&&result.checks,'质检格式无效');
+    const keys=['goal','prerequisites','definitions','examples','sequence','sources','burden'];
+    requireValue(keys.every(k=>typeof result.checks[k]==='boolean'),'质检缺少检查项');
+    for(const i of result.issues)requireValue(text(i.reason,1000)&&['core','optional'].includes(i.severity),'质检问题格式无效');
+    if(result.decision==='pass')requireValue(keys.every(k=>result.checks[k])&&!result.issues.some(i=>i.severity==='core'),'存在核心问题，不能发布');
+  } else if (stage === 'settlement') {
+    requireValue(Array.isArray(result.observations)&&Array.isArray(result.strategy_proposals)&&result.strategy_proposals.length<=3,'结算格式无效');
+    requireValue(result.event_range?.after===context.event_range.after&&result.event_range?.through===context.event_range.through,'结算事件范围不匹配');
+    const events=new Map(context.events.map(e=>[e.id,e]));
+    for(const p of result.strategy_proposals){requireValue(text(p.change,900)&&text(p.reason,900)&&Array.isArray(p.event_ids)&&p.event_ids.length>0&&p.event_ids.every(id=>events.has(id)&&!events.get(id).redacted),'策略缺少有效事件证据');requireValue(p.event_ids.some(id=>['feedback','preference'].includes(events.get(id).type)),'策略更新需明确偏好或反馈，不从单次提问推断');}
+  } else if (stage === 'reinforcement') {
+    if(context.mode==='generate') {requireValue(Array.isArray(result.questions)&&result.questions.length===1,'每次加强一个小问题');for(const q of result.questions)requireValue(text(q.question,600)&&text(q.criterion,1000)&&text(q.example_answer,1500),'加强问题缺少判据或参考回答');}
+    else requireValue(typeof result.passed==='boolean'&&text(result.evidence,1500)&&text(result.explanation,2000),'加强判定缺少证据');
+  } else throw Error('未知阶段：' + stage);
   return result;
 }

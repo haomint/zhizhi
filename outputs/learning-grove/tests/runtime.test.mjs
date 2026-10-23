@@ -18,8 +18,8 @@ test('transport error and cancellation remain errors', async()=>{
  const controller=new AbortController();controller.abort();await assert.rejects(runStage({...base,signal:controller.signal,request:async()=>stop(answer)}),/取消/);
 });
 test('bounded loop terminates repeated tool requests', async()=>{let n=0;await assert.rejects(runStage({...base,request:async()=>{n++;return call();}}),/上限/);assert.equal(n,4);});
-test('empty material source reports unconfigured search', async()=>{
- let n=0;await runStage({...base,request:async p=>{n++;if(n===1)return call();if(n===2)return call('read_materials');const result=JSON.parse(p.messages.filter(m=>m.role==='tool').at(-1).content);assert.equal(result.status,'unavailable');assert.equal(result.external_search,'not_configured');return stop(answer);}});
+test('empty material source reports program-managed retrieval', async()=>{
+ let n=0;await runStage({...base,request:async p=>{n++;if(n===1)return call();if(n===2)return call('read_materials');const result=JSON.parse(p.messages.filter(m=>m.role==='tool').at(-1).content);assert.equal(result.status,'unavailable');assert.equal(result.external_search,'program-managed-wikipedia');return stop(answer);}});
 });
 test('cards reject quiz types, unknown nodes and missing definitions',()=>{
  const context={nodes:[{id:'n'}]};const valid={cards:[{node_id:'n',kind:'定义诠释',title:'是什么',text:'输入对应唯一输出'},{node_id:'n',kind:'例子',title:'例子',text:'f(x)=2x，f(3)=6'}]};

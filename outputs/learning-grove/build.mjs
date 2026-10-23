@@ -12,5 +12,5 @@ await cp('THIRD-PARTY-NOTICES.md', 'static/THIRD-PARTY-NOTICES.md');
 const files = ['pi-runtime.js', 'mobile-service.js', 'skills/manifest.json'];
 const hashes = {};
 for (const f of files) hashes[f] = createHash('sha256').update(await readFile('static/' + f)).digest('hex');
-await writeFile('static/build-info.json', JSON.stringify({ version: '0.7.0', piVersion: '1.4.0', actualPiCoreBundled: true, hashes }, null, 2));
+await writeFile('static/build-info.json', JSON.stringify({ version: '1.0.0', piVersion: '1.4.0', actualPiCoreBundled: true, hashes }, null, 2));
 console.log('Pi runtime and manifest-driven resources built.');

@@ -1,20 +1,19 @@
 {
   "schemaVersion": 1,
-  "version": "0.7.0",
+  "version": "1.0.0",
   "base": "agent",
   "activeStages": [
     "intake",
     "roadmap",
     "cards",
-    "tutor"
-  ],
-  "preparedStages": [
+    "tutor",
     "knowledge",
     "page-plan",
     "quality",
     "settlement",
     "reinforcement"
   ],
+  "preparedStages": [],
   "references": [
     "math",
     "history"
@@ -73,7 +72,7 @@
     "read_learning_context": "active",
     "read_learning_memory": "active-task-snapshot",
     "read_materials": "active-provided-only",
-    "search_resources": "not-configured"
+    "search_resources": "program-managed-wikipedia"
   },
   "limits": {
     "requests": 4,
@@ -81,6 +80,8 @@
     "timeoutMs": 150000,
     "nodesPerBatch": 1,
     "pagesPerNode": 8,
-    "automaticRetries": 0
+    "automaticRetries": 0,
+    "pipelineTimeoutMs": 360000,
+    "qualityRevisions": 1
   }
 }

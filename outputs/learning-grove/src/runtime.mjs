@@ -12,7 +12,7 @@ export async function runStage({ stage, context, system, request, model = 'deeps
   const values = {
     read_learning_context: Object.fromEntries(Object.entries(snapshot).filter(([k]) => !['memories', 'materials', 'related_learning_records'].includes(k))),
     read_learning_memory: { memories: snapshot.memories || [], related_learning_records: snapshot.related_learning_records || [], evidence_note: '阅读进度不代表掌握' },
-    read_materials: { materials: snapshot.materials || [], status: snapshot.materials?.length ? 'provided' : 'unavailable', external_search: 'not_configured' },
+    read_materials: { materials: snapshot.materials || [], status: snapshot.materials?.length ? 'provided' : 'unavailable', external_search: snapshot.retrieval_status || 'program-managed-wikipedia' },
   };
   const tools = Object.entries(values).map(([name, data]) => ({
     name, label: name, description: { read_learning_context: '读取本次任务、目标、当前卡片或节点。', read_learning_memory: '读取此次任务已筛选的学习经历；未知不推测。', read_materials: '读取本次实际提供的材料，空列表表示没有材料，不代表已联网。' }[name],

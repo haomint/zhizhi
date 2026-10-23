@@ -1,10 +1,10 @@
 {
-  "version": "0.7.0",
+  "version": "1.0.0",
   "piVersion": "1.4.0",
   "actualPiCoreBundled": true,
   "hashes": {
-    "pi-runtime.js": "104009d75598bb3768cd49a4335efc20a4b145994a53a520807ae081a88d983c",
-    "mobile-service.js": "8d2932a2a3a7d9c599db714744095d6cc43f7953a64313bc35c19ccf5ad8fd35",
-    "skills/manifest.json": "593afe461709f9c6d28ec1ede9a5038e91c7c982ad50d6d910e942a8fbff338a"
+    "pi-runtime.js": "fd68b6093a6d1429cfa3ce9fe4bfa5262f80e26f423d57961f764519bd41765d",
+    "mobile-service.js": "cf7cbf21d03d78b3dc58ed0fd4851bfc1d9268a2840b257dfe03f2b82667f1de",
+    "skills/manifest.json": "c459d69f8b97c9b32e66cbab0573f3f6ac2e06babdf660e89381d24c1ca18d3d"
   }
 }

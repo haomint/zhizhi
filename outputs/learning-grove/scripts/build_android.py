@@ -4,6 +4,7 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 tools=root.parents[1]/'work/pi-probe-tools'
 env=os.environ.copy()
+if (tools/'signing/debug.keystore').exists(): env.setdefault('ZHIZHI_DEBUG_KEYSTORE',str(tools/'signing/debug.keystore'))
 if not env.get('JAVA_HOME'):
     candidates=list((tools/'java').glob('*/bin/java'))
     if candidates: env['JAVA_HOME']=str(candidates[0].parents[1])
@@ -17,6 +18,6 @@ if (tools/'gradle-cache').exists(): env.setdefault('GRADLE_USER_HOME', str(tools
 subprocess.run(['npm.cmd' if os.name=='nt' else 'npm','run','android:sync'],cwd=root,env=env,check=True)
 command=['gradlew.bat'] if os.name=='nt' else ['bash','gradlew']
 subprocess.run(command+['--no-daemon','--max-workers=2',':app:assembleDebug'],cwd=root/'android',env=env,check=True)
-out=root.parent/'知枝-整合验证版-0.7.0.apk'
+out=root.parent/'知枝-1.0.0.apk'
 shutil.copyfile(root/'android/app/build/outputs/apk/debug/app-debug.apk',out)
 print(out)

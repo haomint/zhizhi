@@ -6,8 +6,12 @@
     "keyStorage": "Android Keystore; no key in config"
   },
   "retrieval": {
-    "provider": "none",
-    "enabled": false,
-    "reason": "尚未选定真实检索服务；仅支持任务提供的材料"
+    "provider": "wikipedia-zh",
+    "enabled": true,
+    "endpoint": "https://zh.wikipedia.org/w/api.php",
+    "keyRequired": false,
+    "maxResults": 3,
+    "fallback": "用户粘贴或导入 TXT/Markdown",
+    "privacy": "仅发送检索关键词，不发送个人记忆或模型 Key"
   }
 }
