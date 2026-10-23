@@ -1,0 +1,6 @@
+{
+  "appId": "app.zhizhi.personal",
+  "appName": "知枝",
+  "webDir": "static",
+  "server": { "androidScheme": "https" }
+}

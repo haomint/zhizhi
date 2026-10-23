@@ -1,0 +1,37 @@
+{
+  "appVersion": "0.1.0",
+  "applicationId": "app.zhizhi.piprobe",
+  "piCore": "1.4.0",
+  "browserBundleBytes": 222825,
+  "actualPiCoreBundled": true,
+  "nodePolyfills": false,
+  "unitTests": {
+    "passed": 9,
+    "failed": 0,
+    "modelTransport": "simulated responses; actual Pi Agent"
+  },
+  "browserChecks": {
+    "viewport": "390x844",
+    "mockLoop": true,
+    "profileChange": true,
+    "reloadPersistence": true,
+    "noPageErrors": true,
+    "noHorizontalOverflow": true
+  },
+  "android": {
+    "compile": "passed",
+    "signature": "verified v2",
+    "minSdk": 24,
+    "targetSdk": 36,
+    "webAssetsMatch": true,
+    "nativePluginPresent": true,
+    "physicalDeviceTest": "not performed",
+    "realDeepSeekAccountTest": "not performed"
+  },
+  "apkSha256": "5a78bea5b6bb484f42ba9045d39e4852bdc954ad4c75f4e3ed99acf2376d0e78",
+  "limitations": [
+    "No user API key available; real service access awaits user test",
+    "No Android physical-device run in this environment",
+    "Custom non-streaming native model transport; no full Pi SDK feature test"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "appId": "app.zhizhi.piprobe",
+  "appName": "知枝 Pi 验证",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

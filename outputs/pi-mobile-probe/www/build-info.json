@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "piVersion": "1.4.0",
+  "actualPiCoreBundled": true,
+  "bytes": 222825,
+  "sha256": "0a2206937d3e09f1bb45fc090425db8e81af9563a3ebb6ab7c60178d3bd2c407",
+  "nodePolyfills": false,
+  "modelTransport": "native HTTPS, non-streaming response adapted to Pi events"
+}

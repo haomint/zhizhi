@@ -1,0 +1,14 @@
+import { build } from 'esbuild';
+import { mkdir, copyFile, writeFile, readFile, cp } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+await mkdir('www', { recursive: true });
+const output = await build({ entryPoints: ['src/app.mjs'], outfile: 'www/app.js', bundle: true, platform: 'browser', format: 'esm', target: ['chrome110'], minify: true, metafile: true, legalComments: 'eof' });
+for (const name of ['index.html', 'styles.css']) await copyFile(`src/${name}`, `www/${name}`);
+await cp('LICENSES', 'www/licenses', { recursive: true });
+await copyFile('THIRD-PARTY-NOTICES.md', 'www/THIRD-PARTY-NOTICES.md');
+const inputs = Object.keys(output.metafile.inputs);
+if (!inputs.some(x => x.includes('@earendil-works/pi-agent-core/dist/agent-loop.js'))) throw Error('真实 Pi Agent loop 未包含在产物中');
+const bundle = await readFile('www/app.js');
+await writeFile('www/build-info.json', JSON.stringify({ version: '0.1.0', piVersion: '1.4.0', actualPiCoreBundled: true, bytes: bundle.length, sha256: createHash('sha256').update(bundle).digest('hex'), nodePolyfills: false, modelTransport: 'native HTTPS, non-streaming response adapted to Pi events' }, null, 2));
+await writeFile('bundle-metafile.json', JSON.stringify(output.metafile, null, 2));
+console.log('Browser build OK; real Pi Core bundled:', bundle.length, 'bytes.');
