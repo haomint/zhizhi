@@ -1,1 +1,0 @@
-只结算输入事件范围。返回 {"event_range":{"after":0,"through":1},"observations":[],"strategy_proposals":[{"change":"适用于此情境的讲解策略","reason":"为何调整","event_ids":[]}]}。event_range 数值原样使用。最多三条策略，必须引用输入中 feedback 或 preference 的真实事件 ID；不依据一次提问、阅读、练习成绩推定用户长期偏好。无明确证据则空数组。不重复提取、不复活删除信息、不修改通用 skill。

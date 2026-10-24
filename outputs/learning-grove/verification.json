@@ -1,54 +1,57 @@
 {
-  "date": "2026-10-24",
-  "version": "1.0.1",
-  "unitTests": {
-    "passed": 24,
-    "realPiLoop": true,
-    "modelTransport": "simulated; no real API key used"
+  "version": "1.1.0",
+  "date": "2026-10-24T08:42:22.854668+00:00",
+  "language": "TypeScript",
+  "ui": "React",
+  "productionEntry": "src/main.tsx",
+  "strictTypecheckPassed": true,
+  "formatCheckPassed": true,
+  "automaticTests": {
+    "passed": 28,
+    "failed": 0,
+    "realPiTools": true,
+    "modelTransport": "simulated"
   },
-  "coverage": [
-    "source-backed pipeline",
-    "quality retry limit",
-    "source reference validation",
-    "short writes during generation",
-    "stale result rejection",
-    "cancellation",
-    "interrupted task recovery",
-    "settlement deduplication",
-    "memory redaction",
-    "voluntary reinforcement and version evidence",
-    "route acceptance",
-    "archive merge/replace/rollback"
-  ],
   "browser": {
-    "viewport": "390x844",
-    "materials": "passed",
-    "reinforcement": "passed with fixed demo",
-    "orangeEvidence": "passed",
-    "feedback": "passed",
-    "settlement": "passed",
-    "archiveImport": "passed",
-    "reload": "passed",
-    "pageErrors": 0,
-    "horizontalOverflow": false,
-    "reinforcementEvidenceRetention": "passed: later wrong attempt retains earlier same-version evidence"
+    "passed": true,
+    "cases": 13,
+    "record": "verification-react/browser.json",
+    "modelMode": "explicitly labeled demo"
   },
-  "retrieval": {
-    "provider": "zh.wikipedia.org",
-    "liveHttp": 200,
-    "browserBusinessAction": "passed; 3 actual extracts saved on 2026-10-24"
+  "android": {
+    "version": "1.1.0",
+    "apkSha256": "cbf060c69a753b9c5b0897a453a7bda11b1081b33a7292e6fcfe23803ed972e0",
+    "apkBytes": 4308106,
+    "assetsCompared": 20,
+    "signatureVerified": true,
+    "sameCertificateAs101": true,
+    "sameCertificateAs061": false,
+    "sameCertificateAs070": false,
+    "installation": "app.zhizhi.personal.v1, versionCode 6; same identity as 1.0.1, physical upgrade and lifecycle acceptance still pending",
+    "certificateSha256": "74f544cf8361c2f9186ed8a4400d81bc325d0d51ab1f734468fe37f8764f7930",
+    "package": "package: name='app.zhizhi.personal.v1' versionCode='6' versionName='1.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'"
   },
-  "environmentDoctor": "passed",
-  "androidBuild": "passed",
-  "apkVerification": "apk-verification.json",
-  "realModel": "not_tested",
-  "phoneInstall": "not_tested",
-  "phoneUpgrade": "independent app.zhizhi.personal.v1; keep 0.6.1/0.7/1.0.0 and migrate archives; device validation pending",
-  "regressions": [
-    "archive merge retains memory/event/strategy references and processed event watermarks",
-    "duplicate imported event sequences are rejected without mutation",
-    "concurrently merged events are sorted before settlement",
-    "later failed reinforcement attempt preserves same-version prior passing evidence"
-  ],
-  "buildCompatibility": "public resources copied without cross-user metadata writes; isolated Gradle daemon registry and executable tool extraction; separately retained v1 signing key"
+  "applicationSourceFiles": 16,
+  "applicationSourceHashes": {
+    "src/application/service.ts": "f4ef48dab6db6c8d4b740be06e6e36d5dd00d6c44abcd29c93cfc38cebc11924",
+    "src/contracts.ts": "8755bba0a6947530dfcbd4a2f2379753f72e77c64773c776ef3929892ae90339",
+    "src/core/domain.ts": "401aad00f9e980bc7ad805aa4506ca113919f9944690397b655c8e98a61de35b",
+    "src/core/learning.ts": "7a3c40106797532d1f1137bdc1d0971d568a1ec36e55fbb5c41eeb170dac72ba",
+    "src/core/runtime.ts": "66752e746e55900a6d9f4b2531ac1383194a077c32485e44866a7ad2ec809ddc",
+    "src/core/transport.ts": "f94073cc20888e229603e5ec0cacc7b326e12f812e12a26215828c7539c312e1",
+    "src/core/validate.ts": "095dd3a3a49e2202481d24320fcbb14a0d8ee03ae2723e5d5e206e421b3e70b5",
+    "src/main.tsx": "107e1a84e9ba42e2d116640e2b88d8235026c3031e63f6e6611f31703247b7c6",
+    "src/platform/platform.ts": "ef98c3791461ad0a3a6561ad8c7da78d446154467ead2085859e6bd016d43f99",
+    "src/platform/repository.ts": "eb56337d5285055d3f7bb66390d3a73f464dca724dbded4c77855ef6e177f70b",
+    "src/ui/App.tsx": "8276aaa5c6eb2a7e80c46e80f10f5e31a8322348215018efb7741b7cbcb7ba34",
+    "src/ui/Dialogs.tsx": "c00368388cfe501a04a010fe63c7d48b60906ed62b59bb8c3b4c06b7a96c04ae",
+    "src/ui/Intake.tsx": "9ac58a45a2b110cd2fbb909dcc943cfac68665f841e4751582fb27e901949848",
+    "src/ui/Library.tsx": "d627fe8b3ff70c74ce0dd08840187b37415c84e20a1067d198f4ac5bb098c852",
+    "src/ui/Reader.tsx": "84b5594b3b670d2836faa70401e8d5a0cecc1d690f2b69974b6bb40e9a906436",
+    "src/ui/context.tsx": "775fbf5ba78d2eacde97a9bed7b45b66d63a3490231d1982c64ade1aeda3aa8e"
+  },
+  "legacy": "Python desktop sources archived under legacy/desktop; superseded JavaScript application entries removed",
+  "realModelAccountTested": false,
+  "physicalAndroidTested": false,
+  "physicalUpgradeTested": false
 }

@@ -1,47 +1,70 @@
-# 知枝 1.0.1
+# 知枝 1.1.0 · React + TypeScript
 
-个人安卓学习助手：Pi Core 1.4.0 在手机运行，DeepSeek 负责模型推理，IndexedDB 保存学习记录，Android Keystore 保存 Key。1.0.1 使用独立应用 ID `app.zhizhi.personal.v1`、versionCode 5，与先前版本并存，通过导出/导入迁移学习档案，不直接覆盖旧版。
+这是正式应用的 TS/React 迁移版。界面为 React，学习、记忆、任务调度和 Pi 适配为严格 TypeScript；沿用 Capacitor Android 与必要 Java 原生插件。手机独立运行，模型经 DeepSeek API 联网推理，档案存本地 IndexedDB，Key 由 Android Keystore 加密。
 
-## 已实现
+## 运行与检查
 
-需求与关键补问、路线轮廓及确认变更、百科检索/文字材料导入、知识整理、页序、卡片、质量检查与一次修订、主动答疑、明确反馈、事件结算、个人策略、记忆纠正与遗忘、自愿加强证据、知识树、当前/下一节点准备、取消及中断恢复、内容历史回退、档案合并/替换/恢复。
-
-默认正文为讲述和完整例子，不强制测验。阅读点亮与加强通过分开。核心缺少依据或内容检查未通过时不发布。
-
-## 构建
+要求 Node.js 24+。应用不要求手机安装 Node.js 或 TypeScript 编译器。
 
 ```bash
 npm ci
+npm run dev
 npm run check
-python3 scripts/doctor.py
-python3 scripts/build_android.py
+```
+
+`check` 依次执行 Prettier 检查、28 项自动测试、TS 类型检查、Vite 生产构建和工程核对。每项测试覆盖现有学习行为或迁移风险，不把编译通过当成学习效果证明。
+
+```bash
+npm run preview -- --port 5175
+node scripts/verify_react.cjs
+```
+
+浏览器脚本需要 Playwright 与 Chromium。本工作区可使用预装 Playwright；其他环境先安装对应工具。浏览器检查前完成构建，检查过程中不要重建资源。默认验证地址为 `http://localhost:5175/`，可通过 `ZHIZHI_URL` 修改。
+
+## 模块
+
+```text
+src/
+  main.tsx                  React 应用入口
+  contracts.ts              动作、档案、模型阶段及服务契约
+  ui/                       页面、卡片、表单、弹窗与导航
+  application/service.ts    应用服务、任务队列、原子保存与旧结果拦截
+  core/
+    domain.ts               事件、记忆、档案迁移与导入
+    learning.ts             资料到卡片、结算、加强与路线调整
+    runtime.ts              真实 Pi Agent 与只读工具循环
+    transport.ts            模型消息协议
+    validate.ts             模型结果的运行时校验
+  platform/
+    repository.ts           保持原名的 IndexedDB 存储
+    platform.ts             Android / 浏览器能力适配
+skills/                     十二份教学规则的唯一源码
+public/demo.json            明确标注的固定演示
+android/                    Capacitor 与现有原生插件
+legacy/                     已退出正式运行路径的历史实现
+```
+
+界面通过 `LearningService` 的类型化 `dispatch/read/subscribe` 调用业务；业务层不操作 DOM，平台能力通过接口注入。不再覆盖 `window.fetch`，也不依赖 `window.ZhizhiPi`。应用源码没有 `any`、`@ts-nocheck` 或 `@ts-ignore`。
+
+`npm run build` 将教学规则同步到 `public/` 并生成 `dist/`，同时生成兼容旧托管预览进程的 `static/` 镜像。这两处均不作为源码提交。`legacy/desktop/` 不是当前应用后端。
+
+## Android
+
+```bash
+npm run android:build
 python3 scripts/verify_apk.py
 ```
 
-Windows 使用 `python` 或 `build-android.ps1`。设置 JDK 21 的 JAVA_HOME 与含 API 36 的 ANDROID_HOME。当前工作区复用 `work/pi-probe-tools`，v1 签名单独保存在 `work/release-signing/zhizhi-v1.keystore`。旧签名因上一会话系统用户的权限限制不可读取，本次没有更改它。换机器时通过 ZHIZHI_DEBUG_KEYSTORE 指向同一 v1 私钥，切勿放入源码包；换签名不能直接覆盖现有 v1 安装。产物位于上级 `知枝-1.0.1.apk`。
+配置 JDK 21 的 `JAVA_HOME` 与含 API 36 的 `ANDROID_HOME`。本环境可复用工作区 `work/pi-probe-tools` 缓存。Windows 可用 `build-android.ps1`。
 
-共享工作区重建时，资源复制不修改其他用户的权限元数据；Gradle 使用当前系统用户的守护进程目录，必要时从可读 Maven 缓存提取当前用户可执行的 aapt2。不修改其他用户的守护进程、旧密钥或全局配置。
+应用 ID 保持 `app.zhizhi.personal.v1`，versionCode 为 6，versionName 为 1.1.0。正式构建使用 `work/release-signing/zhizhi-v1.keystore`；其他机器须通过 `ZHIZHI_DEBUG_KEYSTORE` 指向同一 v1 私钥。APK 放到上级 `知枝-1.1.0.apk`。签名核对记录见 `apk-verification.json`。
 
-`npm run build` 从 manifest 同步十二份规则，编译真实 Pi 浏览器包，并检查 Agent loop 已进入产物。规则按阶段及学科选择加载。
+数据库保持 `zhizhi-app` / `state` / `document`，档案格式保持 `zhizhi-personal-2`。旧文档迁移保留学习树 ID、卡片、阅读位置、记忆和事件；未完成任务重开后标为中断，用户手动重试。
 
-## 代码入口
+## 功能与验收边界
 
-- `src/runtime.mjs` / `transport.mjs`：Pi Agent、只读工具与模型协议、预算。
-- `src/validate.mjs`：各阶段 JSON 及来源、质检、事件证据契约。
-- `src/domain.mjs`：版本、事件、个人记录、遗忘和档案导入。
-- `src/learning.mjs`：生成流水线、结算、加强与路线变更。
-- `static/mobile-service.js`：IndexedDB 事务、任务状态、原生桥接、旧结果拦截。
-- `static/app.js` / `v1-ui.js`：主阅读体验与新增功能入口。
-- `skills/manifest.json`：规则版本与启用阶段；`config/providers.json`：公开提供方配置。
-- `android/.../PersonalPlugin.java`：加密 Key、模型 HTTPS、资料检索、取消和分享。
-- `tests/`：自动回归；`scripts/verify_v1.cjs`：本环境浏览器验收脚本。
+保留需求整理、路线、资料导入与有限百科检索、完整节点和短卡片、主动答疑、反馈记忆、结算、自愿加强、知识树、档案恢复及任务取消。主线不强制测验，阅读与加强证据分开。
 
-## 预览及边界
+28 项自动测试通过；正式 React 界面 13 项浏览器场景通过。真实模型输出使用模拟传输做回归，浏览器 UI 使用标注的演示。真实 DeepSeek Key、目标手机覆盖安装、前后台切换和长期性能尚待验收，不能以本轮检查宣称已经真机稳定。
 
-`python3 scripts/preview_server.py --port 5175` 是浏览器预览，可使用固定演示、本地功能和百科资料；不接受模型 Key。预览模拟桥没有真实 Capacitor.getPlatform，实际安卓不会进入该分支。
-
-Python 桌面 `server.py` 和 Windows 启动器仍是历史实现，不作为 1.0 正式运行路径。手机使用 APK，不要求电脑常开。
-
-检索只覆盖中文 Wikipedia 摘要及用户导入的文字，不是通用网页/PDF 抓取。模型结果经过程序门槛与 AI 检查，仍需核对重要内容。模拟模型自动测试不代表真实账户或真机通过。通用 skill 自动升级按既定范围后置。
-
-详细使用与验收见上级 `知枝-1.0使用与验收说明.md`。测试记录见 `verification.json` 和 `apk-verification.json`。
+完整产品说明见上级 `知枝-1.1使用与验收说明.md`，工程边界见仓库 `docs/工程架构与开发规范.md`。
