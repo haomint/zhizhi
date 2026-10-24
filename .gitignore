@@ -16,8 +16,9 @@
 **/.env.*
 **/*.apk
 **/*.zip
-work/pi-probe-tools/
-work/release-signing/
-work/portable-03/
-work/便携验收*/
-work/pocket-check*/
+
+# Historical local prototypes, old validation scratch, and reproducible probe output.
+# Sources remain recoverable from tag v1.1.0; keep existing local files untouched.
+/outputs/知枝-手机预览.html
+/work/
+/outputs/pi-mobile-probe/www/
