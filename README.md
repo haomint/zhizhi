@@ -1,25 +1,37 @@
-# 知枝 · 1.0.1 开发与交付入口
+# 知枝 · React + TypeScript
 
-- 正式源码：`outputs/learning-grove/`。
-- 使用与验收：`outputs/知枝-1.0使用与验收说明.md`。
-- 安装包：`outputs/知枝-1.0.1.apk`。
-- 源码包：`outputs/知枝-1.0.1-源码.zip`（不含依赖、构建产物、签名和本地数据库）。
-- 产品策划：`outputs/知枝-MVP完整策划案.md`；专项指导保留设计细节。
-- 独立 Pi 验证：`outputs/pi-mobile-probe/`，作为技术参照。
+知枝是手机本地运行的个人学习助手。正式应用已迁移为 **React + TypeScript + Vite + Capacitor**；学习、记忆、任务和 Pi 运行逻辑使用 TypeScript，安卓原生插件负责密钥、网络和系统分享。
 
-1.0 已接通约定的个人学习 MVP 核心流程，详见交付说明中的功能与验证边界。手机真实模型和真机验收由用户执行。
+- [正式应用源码与开发入口](outputs/learning-grove/README.md)：当前版本 1.1.0。
+- [工程架构与开发规范](docs/工程架构与开发规范.md)：目录职责、接口和检查命令。
+- [产品策划](outputs/知枝-MVP完整策划案.md)：MVP 功能边界与教学规则。
+- [1.1 使用与验收说明](outputs/知枝-1.1使用与验收说明.md)。
+- [迁移验收记录](outputs/知枝-1.1-TS-React迁移验收.md)。
+- [独立技术验证](experiments/react-ts-mobile/README.md)：正式迁移前的 React/TS/Pi 可行性切片。
+
+## 开发
+
+要求 Node.js 24+。先进入正式应用目录：
 
 ```bash
 cd outputs/learning-grove
 npm ci
-npm run check
-python3 scripts/build_android.py
+npm run dev
 ```
 
-远程仓库：[Zhangchenhao-111/zhizhi](https://github.com/Zhangchenhao-111/zhizhi)（私有）。主分支为 `main`。
+提交前执行 `npm run check`，完成格式检查、28 项自动测试、严格类型检查、生产构建和工程核对。浏览器预览支持本地阅读和明确标注的演示；真实模型和加密 Key 在安卓应用中使用。
 
-Git 标签：`pre-integration-20261023`（清理前）、`ready-0.7.0`（开工基线）、`v1.0.0`（原始 1.0 基线）、`v1.0.1`（续作修订）。
+```bash
+npm run android:build
+python3 scripts/verify_apk.py
+```
 
-协作时先明确任务与验收条件，从最新 `main` 创建 `feat/功能名` 或 `fix/问题名` 分支；完成对应验证后提交 Pull Request，说明改动、验证结果和剩余问题，审查后合并。多人或多个 Agent 并行开发时使用独立克隆或 Git worktree，避免共用工作目录。
+Android 构建还需 JDK 21、Android API 36 和可读取的签名。APK 与源码压缩包在工作区单独交付，不进入 Git。1.1 沿用 1.0.1 的应用 ID、v1 签名与 IndexedDB 名称；真机覆盖安装、生命周期和真实模型仍需设备验收。
 
-Key、签名私钥、本地数据库、安装包和工具缓存不进入 Git。1.0.1 使用独立应用 ID `app.zhizhi.personal.v1` 与单独保留的签名，可与 0.6.1、0.7 和原始 1.0 并行安装；通过 JSON 档案迁移，无需卸载旧 App。新签名保存在排除于 Git/源码包的 `work/release-signing/`，后续升级应复用。Git 源码回退不等于手机数据回退。
+## 协作
+
+远程仓库：[Zhangchenhao-111/zhizhi](https://github.com/Zhangchenhao-111/zhizhi)（私有）。按任务创建 `feat/…`、`fix/…` 或 `refactor/…` 分支，说明验收条件，完成检查后通过 Pull Request 合入 `main`。多人或多个 Agent 使用独立克隆或 worktree。
+
+旧 Python 桌面实现已归档在 `outputs/learning-grove/legacy/`。当前应用入口为 `src/main.tsx`，不依赖电脑后台服务。`dist/` 和兼容旧预览的 `static/` 都是生成目录。
+
+API Key、签名私钥、本地数据库、依赖缓存和安装包不进入 Git。稳定 v1 签名仍在被忽略的 `work/release-signing/`，请单独保存；换机器通过 `ZHIZHI_DEBUG_KEYSTORE` 指定同一签名。Git 源码回退不等于手机数据回退。

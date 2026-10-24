@@ -1,0 +1,18 @@
+{
+  "sourceCommit": "36668f5",
+  "note": "Unmodified snapshot of production runtime; reused to test React/TS interoperability. Model transport is simulated in this experiment.",
+  "files": {
+    "runtime.mjs": {
+      "source": "outputs/learning-grove/src/runtime.mjs",
+      "sha256": "4926114c5fc5512f78ee9cf2775094fe9fd6e4d2dcd1420a72a4e2ab39e12593"
+    },
+    "transport.mjs": {
+      "source": "outputs/learning-grove/src/transport.mjs",
+      "sha256": "e65580b13d20b49de0653f74c309a4509c64d9ed4a72bbf29f4ee5ea20c48a73"
+    },
+    "validate.mjs": {
+      "source": "outputs/learning-grove/src/validate.mjs",
+      "sha256": "dad243740884ad34e1835f17cfbe7c9fb44c685fe95c19a780c93eebdd1c6cfd"
+    }
+  }
+}

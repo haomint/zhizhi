@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-24T07:39:02.811Z",
+  "browser": "148.0.7778.96",
+  "viewport": "390x844",
+  "elapsedMs": 8241,
+  "passed": true,
+  "caseCount": 10,
+  "cases": [
+    {
+      "name": "Production React application mounts at mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "IndexedDB restores reading position and preference after reload",
+      "passed": true
+    },
+    {
+      "name": "50 sequential real Pi loops complete with simulated model transport",
+      "passed": true,
+      "iterations": 50,
+      "requestsPerLoop": 2,
+      "toolsPerLoop": 1
+    },
+    {
+      "name": "Simulated transport failure preserves the last committed result",
+      "passed": true
+    },
+    {
+      "name": "UI remains interactive during a pending request and cancellation preserves state",
+      "passed": true
+    },
+    {
+      "name": "Reload during pending work preserves committed data and a new run succeeds",
+      "passed": true
+    },
+    {
+      "name": "Loaded application reads and saves locally while browser network is disabled",
+      "passed": true
+    },
+    {
+      "name": "No horizontal overflow at widths 360, 390, and 768",
+      "passed": true
+    },
+    {
+      "name": "Browser reports native bridge as untested rather than simulating native success",
+      "passed": true
+    },
+    {
+      "name": "No browser JavaScript or console errors",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "caveats": [
+    "Chromium browser, not Android WebView or a physical phone.",
+    "Pi core and tools are real; model responses and transport failures are simulated.",
+    "No real model API, Android lifecycle, native bridge runtime, battery, device memory, or long-duration performance measured."
+  ]
+}

@@ -1,12 +1,13 @@
 {
-  "version": "1.0.1",
-  "apkSha256": "f25c40010725885605a897f724db150a45711e1015e5f0a82ccdb649e20e5e93",
-  "apkBytes": 4275230,
-  "assetsCompared": 33,
+  "version": "1.1.0",
+  "apkSha256": "cbf060c69a753b9c5b0897a453a7bda11b1081b33a7292e6fcfe23803ed972e0",
+  "apkBytes": 4308106,
+  "assetsCompared": 20,
   "signatureVerified": true,
+  "sameCertificateAs101": true,
   "sameCertificateAs061": false,
   "sameCertificateAs070": false,
-  "installation": "independent app.zhizhi.personal.v1; keep older apps and migrate via archive export/import",
+  "installation": "app.zhizhi.personal.v1, versionCode 6; same identity as 1.0.1, physical upgrade and lifecycle acceptance still pending",
   "certificateSha256": "74f544cf8361c2f9186ed8a4400d81bc325d0d51ab1f734468fe37f8764f7930",
-  "package": "package: name='app.zhizhi.personal.v1' versionCode='5' versionName='1.0.1' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'"
+  "package": "package: name='app.zhizhi.personal.v1' versionCode='6' versionName='1.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'"
 }

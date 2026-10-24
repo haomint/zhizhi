@@ -7,3 +7,9 @@ android/**/build/
 *.jks
 data/
 __pycache__/
+dist/
+static/
+public/skills/
+public/CAPACITOR-ANDROID-LICENSE.txt
+.static-build-*/
+verification-react/failure.*

@@ -1,0 +1,68 @@
+{
+  "version": "1.1.0",
+  "ui": "React",
+  "language": "TypeScript",
+  "date": "2026-10-24T08:25:55.856Z",
+  "browser": "148.0.7778.96",
+  "passed": true,
+  "cases": [
+    {
+      "name": "Formal React application boots at phone viewport",
+      "passed": true
+    },
+    {
+      "name": "Demo route and reading position survive a reload",
+      "passed": true
+    },
+    {
+      "name": "Materials are saved through the typed service",
+      "passed": true
+    },
+    {
+      "name": "Explicit feedback reaches persistent memory",
+      "passed": true
+    },
+    {
+      "name": "Voluntary reinforcement retains earlier evidence after a later incorrect answer",
+      "passed": true
+    },
+    {
+      "name": "Question form renders the answer in the correct node",
+      "passed": true
+    },
+    {
+      "name": "Reading completion and repeated settlement do not duplicate memory",
+      "passed": true
+    },
+    {
+      "name": "Knowledge tree distinguishes reading and reinforcement",
+      "passed": true
+    },
+    {
+      "name": "Archive export contains the existing format and no model settings",
+      "passed": true
+    },
+    {
+      "name": "Archive merge and restore work from React controls",
+      "passed": true
+    },
+    {
+      "name": "Deleting memory excludes the associated evidence",
+      "passed": true
+    },
+    {
+      "name": "Saved learning remains readable without network",
+      "passed": true
+    },
+    {
+      "name": "No horizontal overflow at mobile and desktop widths",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "caveats": [
+    "Chromium browser, not Android WebView or a physical phone.",
+    "Browser flow uses the explicitly labeled demo; real Pi pipeline is tested separately with simulated model transport.",
+    "Real model credentials, physical installation and Android lifecycle still need device acceptance."
+  ]
+}
