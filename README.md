@@ -7,7 +7,7 @@
 - [产品策划](outputs/知枝-MVP完整策划案.md)：MVP 功能边界与教学规则。
 - [1.1 使用与验收说明](outputs/知枝-1.1使用与验收说明.md)。
 - [迁移验收记录](outputs/知枝-1.1-TS-React迁移验收.md)。
-- [独立技术验证](experiments/react-ts-mobile/README.md)：正式迁移前的 React/TS/Pi 可行性切片。
+- [历史归档与仓库整理](docs/历史归档与仓库整理.md)：旧原型、验证项目与恢复方式。
 
 ## 开发
 

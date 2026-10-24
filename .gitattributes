@@ -1,0 +1,10 @@
+# Statistics describe maintained code; historical experiments keep their real language.
+# https://github.com/github-linguist/linguist/blob/main/docs/overrides.md
+experiments/** linguist-detectable=false
+outputs/pi-mobile-probe/** linguist-detectable=false
+outputs/learning-grove/legacy/** linguist-detectable=false
+
+# Reproducible build output is not authored source.
+**/dist/** linguist-generated=true
+**/static/** linguist-generated=true
+outputs/pi-mobile-probe/www/** linguist-generated=true
