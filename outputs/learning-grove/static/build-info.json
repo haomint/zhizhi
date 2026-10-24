@@ -1,9 +1,9 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "piVersion": "1.4.0",
   "actualPiCoreBundled": true,
   "hashes": {
-    "pi-runtime.js": "fd68b6093a6d1429cfa3ce9fe4bfa5262f80e26f423d57961f764519bd41765d",
+    "pi-runtime.js": "3d7707cc8f0ec3267788744342a90f443936c0320e7b6490e931ae7b77311e4c",
     "mobile-service.js": "cf7cbf21d03d78b3dc58ed0fd4851bfc1d9268a2840b257dfe03f2b82667f1de",
     "skills/manifest.json": "c459d69f8b97c9b32e66cbab0573f3f6ac2e06babdf660e89381d24c1ca18d3d"
   }

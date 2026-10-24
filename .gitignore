@@ -17,6 +17,7 @@
 **/*.apk
 **/*.zip
 work/pi-probe-tools/
+work/release-signing/
 work/portable-03/
 work/便携验收*/
 work/pocket-check*/

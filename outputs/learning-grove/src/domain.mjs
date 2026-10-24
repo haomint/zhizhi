@@ -12,7 +12,7 @@ export function migrate(s){
 export function event(s,type,tree_id,node_id,content=''){
  const e={id:uid(),seq:++s.event_seq,type,tree_id,node_id,content:String(content).slice(0,5000),at:now()};s.events.push(e);return e;
 }
-export const activeEvents=(s,t)=>s.events.filter(e=>e.tree_id===t.id&&e.seq>t.settled_through&&!e.redacted);
+export const activeEvents=(s,t)=>s.events.filter(e=>e.tree_id===t.id&&e.seq>t.settled_through&&!e.redacted).sort((a,b)=>a.seq-b.seq);
 export function forget(s,m){
  const ids=new Set(m.event_ids||[]);s.tombstones.push({id:uid(),memory_id:m.id,event_ids:[...ids],text:m.content,at:now()});
  // Redact associated original events from future model context; keep conversation locally visible.
@@ -44,14 +44,15 @@ export function validateArchive(data){
  for(const n of t.nodes){id(n.id);n.description=String(n.description||'').slice(0,2000);n.chapter=String(n.chapter||'学习路线').slice(0,200);n.parent_id=safeId(n.parent_id)?n.parent_id:'';requireThat(Array.isArray(n.links)&&n.links.length<=100,'关联格式无效');for(const l of n.links)requireThat(l&&safeId(l.tree_id)&&safeId(l.node_id),'关联目标无效');n.content_history=[];requireThat(string(n.title,160)&&Array.isArray(n.cards)&&n.cards.length<=32&&Array.isArray(n.messages)&&n.messages.length<=5000,'知识节点格式无效');requireThat(['unseen','learning','read','done','skipped'].includes(n.status),'节点状态无效');
  for(const c of n.cards){id(c.id);c.kind=String(c.kind||'讲解').slice(0,100);c.node_id=n.id;requireThat(string(c.title,200)&&string(c.text,10000),'卡片格式无效');requireThat(!c.image||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(c.image)&&c.image.length<=1500000,'图片格式无效');}
  for(const m of n.messages){requireThat(['user','assistant'].includes(m.role)&&string(m.content,10000),'问答格式无效');m.card_id=n.cards.some(c=>c.id===m.card_id)?m.card_id:'';m.card_title=String(m.card_title||'').slice(0,200);m.at=String(m.at||'');}
- n.page=Math.max(0,Math.min(Number(n.page)||0,n.cards.length-1));if(n.reinforcement){const x=n.reinforcement;requireThat(Number.isInteger(x.version)&&typeof x.passed==='boolean'&&Array.isArray(x.questions)&&x.questions.length===1&&Array.isArray(x.attempts)&&x.attempts.length<=100,'加强记录格式无效');for(const q of x.questions)requireThat(string(q.question,600)&&string(q.criterion,1000)&&string(q.example_answer,1500),'加强问题格式无效');for(const a of x.attempts)requireThat(string(a.answer,4000)&&typeof a.passed==='boolean'&&string(a.evidence,1500)&&string(a.explanation,2000),'加强证据格式无效');requireThat(!x.passed||(x.version===n.content_version&&x.attempts.at(-1)?.passed===true),'通过标记缺少对应版本证据');}
+ n.page=Math.max(0,Math.min(Number(n.page)||0,n.cards.length-1));if(n.reinforcement){const x=n.reinforcement;requireThat(Number.isInteger(x.version)&&typeof x.passed==='boolean'&&Array.isArray(x.questions)&&x.questions.length===1&&Array.isArray(x.attempts)&&x.attempts.length<=100,'加强记录格式无效');for(const q of x.questions)requireThat(string(q.question,600)&&string(q.criterion,1000)&&string(q.example_answer,1500),'加强问题格式无效');for(const a of x.attempts)requireThat(string(a.answer,4000)&&typeof a.passed==='boolean'&&string(a.evidence,1500)&&string(a.explanation,2000),'加强证据格式无效');requireThat(!x.passed||(x.version===n.content_version&&x.attempts.some(a=>a.passed===true)),'通过标记缺少对应版本证据');}
  }
  requireThat(Array.isArray(t.materials)&&t.materials.length<=50,'资料集合无效');for(const m of t.materials){requireThat(string(m.id,100)&&string(m.title,160)&&string(m.text,24000)&&(!m.url||/^https:\/\//.test(m.url)),'材料格式无效');}
  t.sources=t.materials.map(({id,title,url,location,kind,license})=>({id,title,url,location,kind,license}));
  for(const n of t.nodes){requireThat(!n.knowledge||(Array.isArray(n.knowledge.claims)&&n.knowledge.claims.every(c=>string(c.text,2000)&&Array.isArray(c.material_ids)&&c.material_ids.every(safeId))),'知识依据格式无效');n.material_ids=(Array.isArray(n.material_ids)?n.material_ids:[]).filter(safeId);if(n.plan&&!Array.isArray(n.plan.pages))n.plan=null;}
  }
  for(const m of s.memories){id(m.id);requireThat(string(m.content,3000),'个人记录格式无效');m.category=String(m.category||'个人记录').slice(0,100);m.source=String(m.source||'导入记录').slice(0,200);m.tree_id=safeId(m.tree_id)?m.tree_id:'';m.node_id=safeId(m.node_id)?m.node_id:'';m.event_ids=(Array.isArray(m.event_ids)?m.event_ids:[]).filter(safeId);}
- requireThat(s.events.every(e=>string(e.id,100)&&Number.isInteger(e.seq)&&e.seq>0&&typeof e.content==='string'),'事件格式无效');
+ const eventSequences=new Set();
+ for(const e of s.events){requireThat(safeId(e.id)&&Number.isSafeInteger(e.seq)&&e.seq>0&&!eventSequences.has(e.seq)&&typeof e.content==='string','事件格式无效或序号重复');id(e.id);eventSequences.add(e.seq);}
  requireThat(s.tombstones.every(e=>typeof e.text==='string'&&Array.isArray(e.event_ids)),'遗忘记录格式无效');
  s.event_seq=s.events.reduce((max,e)=>Math.max(max,e.seq),0);s.memory_version=Number.isSafeInteger(s.memory_version)&&s.memory_version>=0?s.memory_version:0;
  for(const t of s.trees){for(const k of ['contract_version','material_version','strategy_version','settled_through'])requireThat(Number.isSafeInteger(t[k])&&t[k]>=0,'学习版本或结算位置无效');for(const n of t.nodes)requireThat(Number.isSafeInteger(n.content_version)&&n.content_version>=0&&typeof n.ready==='boolean','内容版本无效');}
@@ -61,12 +62,18 @@ export function importArchive(current,data,mode){
  const incoming=validateArchive(data);
  requireThat(['merge','replace'].includes(mode),'请选择合并或替换');
  if(mode==='replace'){incoming.revision=current.revision;incoming.semantic_revision=current.semantic_revision;return incoming;}
- // All imported IDs are remapped; merging never overwrites a live tree.
+ // Remap evidence as well as objects: forgetting an imported memory must still
+ // invalidate its original events, strategies, and conversation context.
  const map=new Map();const newId=x=>{if(!x)return x;if(!map.has(x))map.set(x,uid());return map.get(x);};
- for(const t of incoming.trees){t.id=newId(t.id);t.title+='（导入）';t.current_node_id=newId(t.current_node_id);t.settled_through=0;t.route_history=[];
+ const sequences=new Map();let nextSequence=current.event_seq;
+ for(const e of [...incoming.events].sort((a,b)=>a.seq-b.seq))sequences.set(e.seq,++nextSequence);
+ const through=old=>Math.max(0,...[...sequences].filter(([seq])=>seq<=old).map(([,seq])=>seq));
+ for(const t of incoming.trees){t.id=newId(t.id);t.title+='（导入）';t.current_node_id=newId(t.current_node_id);t.settled_through=through(t.settled_through);t.route_history=[];
  for(const n of t.nodes){n.id=newId(n.id);n.parent_id=newId(n.parent_id);n.content_history=[];if(n.plan)n.plan.node_id=n.id;if(n.material_ids)n.material_ids=n.material_ids.map(newId);if(n.knowledge)for(const c of n.knowledge.claims||[])c.material_ids=(c.material_ids||[]).map(newId);n.cards.forEach(c=>{c.id=newId(c.id);if(c.node_id)c.node_id=n.id;});n.messages.forEach(m=>{m.card_id=newId(m.card_id);m.event_id=newId(m.event_id);});n.links=(n.links||[]).map(l=>({tree_id:newId(l.tree_id),node_id:newId(l.node_id)}));}t.materials.forEach(m=>m.id=newId(m.id));t.sources=(t.sources||[]).map(m=>({...m,id:newId(m.id)}));}
- for(const m of incoming.memories){m.id=newId(m.id);m.tree_id=newId(m.tree_id);m.node_id=newId(m.node_id);m.event_ids=[];}
- for(const e of incoming.events){e.id=newId(e.id);e.tree_id=newId(e.tree_id);e.node_id=newId(e.node_id);e.seq=++current.event_seq;}
+ for(const m of incoming.memories){m.id=newId(m.id);m.tree_id=newId(m.tree_id);m.node_id=newId(m.node_id);m.event_ids=m.event_ids.map(newId);}
+ for(const e of incoming.events){e.id=newId(e.id);e.tree_id=newId(e.tree_id);e.node_id=newId(e.node_id);e.seq=sequences.get(e.seq);}
+ for(const strategy of incoming.strategies){strategy.id=newId(strategy.id||uid());strategy.tree_id=newId(strategy.tree_id);strategy.event_ids=strategy.event_ids.map(newId);}
+ for(const settlement of incoming.settlements){settlement.id=newId(settlement.id);settlement.tree_id=newId(settlement.tree_id);settlement.through=through(settlement.through);}
  for(const x of incoming.tombstones){x.id=uid();x.memory_id=newId(x.memory_id);x.event_ids=x.event_ids.map(newId);}
- current.trees.push(...incoming.trees);current.memories.push(...incoming.memories);current.events.push(...incoming.events);current.tombstones.push(...incoming.tombstones);current.memory_version++;return current;
+ current.trees.push(...incoming.trees);current.memories.push(...incoming.memories);current.events.push(...incoming.events);current.tombstones.push(...incoming.tombstones);current.strategies.push(...incoming.strategies);current.settlements.push(...incoming.settlements);current.event_seq=nextSequence;current.memory_version++;return current;
 }

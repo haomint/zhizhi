@@ -1,6 +1,6 @@
-# 知枝 1.0
+# 知枝 1.0.1
 
-个人安卓学习助手：Pi Core 1.4.0 在手机运行，DeepSeek 负责模型推理，IndexedDB 保存学习记录，Android Keystore 保存 Key。应用 ID 为 `app.zhizhi.personal.integration`，versionCode 4。与 0.7 整合版相同签名，可覆盖升级；与早期 0.6.1 并存，通过导出/导入迁移学习档案。
+个人安卓学习助手：Pi Core 1.4.0 在手机运行，DeepSeek 负责模型推理，IndexedDB 保存学习记录，Android Keystore 保存 Key。1.0.1 使用独立应用 ID `app.zhizhi.personal.v1`、versionCode 5，与先前版本并存，通过导出/导入迁移学习档案，不直接覆盖旧版。
 
 ## 已实现
 
@@ -18,7 +18,9 @@ python3 scripts/build_android.py
 python3 scripts/verify_apk.py
 ```
 
-Windows 使用 `python` 或 `build-android.ps1`。设置 JDK 21 的 JAVA_HOME 与含 API 36 的 ANDROID_HOME。当前工作区自动复用 `work/pi-probe-tools`；构建脚本显式复用其中保留的开发签名。换机器时通过 ZHIZHI_DEBUG_KEYSTORE 指向同一私钥文件，切勿放入源码包。产物位于上级 `知枝-1.0.0.apk`。
+Windows 使用 `python` 或 `build-android.ps1`。设置 JDK 21 的 JAVA_HOME 与含 API 36 的 ANDROID_HOME。当前工作区复用 `work/pi-probe-tools`，v1 签名单独保存在 `work/release-signing/zhizhi-v1.keystore`。旧签名因上一会话系统用户的权限限制不可读取，本次没有更改它。换机器时通过 ZHIZHI_DEBUG_KEYSTORE 指向同一 v1 私钥，切勿放入源码包；换签名不能直接覆盖现有 v1 安装。产物位于上级 `知枝-1.0.1.apk`。
+
+共享工作区重建时，资源复制不修改其他用户的权限元数据；Gradle 使用当前系统用户的守护进程目录，必要时从可读 Maven 缓存提取当前用户可执行的 aapt2。不修改其他用户的守护进程、旧密钥或全局配置。
 
 `npm run build` 从 manifest 同步十二份规则，编译真实 Pi 浏览器包，并检查 Agent loop 已进入产物。规则按阶段及学科选择加载。
 

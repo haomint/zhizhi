@@ -1,14 +1,54 @@
 {
-  "date": "2026-10-23",
-  "version": "1.0.0",
-  "unitTests": {"passed": 20, "realPiLoop": true, "modelTransport": "simulated; no real API key used"},
-  "coverage": ["source-backed pipeline", "quality retry limit", "source reference validation", "short writes during generation", "stale result rejection", "cancellation", "interrupted task recovery", "settlement deduplication", "memory redaction", "voluntary reinforcement and version evidence", "route acceptance", "archive merge/replace/rollback"],
-  "browser": {"viewport": "390x844", "materials": "passed", "reinforcement": "passed with fixed demo", "orangeEvidence": "passed", "feedback": "passed", "settlement": "passed", "archiveImport": "passed", "reload": "passed", "pageErrors": 0, "horizontalOverflow": false},
-  "retrieval": {"provider": "zh.wikipedia.org", "liveHttp": 200, "browserBusinessAction": "passed; 3 actual extracts saved"},
+  "date": "2026-10-24",
+  "version": "1.0.1",
+  "unitTests": {
+    "passed": 24,
+    "realPiLoop": true,
+    "modelTransport": "simulated; no real API key used"
+  },
+  "coverage": [
+    "source-backed pipeline",
+    "quality retry limit",
+    "source reference validation",
+    "short writes during generation",
+    "stale result rejection",
+    "cancellation",
+    "interrupted task recovery",
+    "settlement deduplication",
+    "memory redaction",
+    "voluntary reinforcement and version evidence",
+    "route acceptance",
+    "archive merge/replace/rollback"
+  ],
+  "browser": {
+    "viewport": "390x844",
+    "materials": "passed",
+    "reinforcement": "passed with fixed demo",
+    "orangeEvidence": "passed",
+    "feedback": "passed",
+    "settlement": "passed",
+    "archiveImport": "passed",
+    "reload": "passed",
+    "pageErrors": 0,
+    "horizontalOverflow": false,
+    "reinforcementEvidenceRetention": "passed: later wrong attempt retains earlier same-version evidence"
+  },
+  "retrieval": {
+    "provider": "zh.wikipedia.org",
+    "liveHttp": 200,
+    "browserBusinessAction": "passed; 3 actual extracts saved on 2026-10-24"
+  },
   "environmentDoctor": "passed",
   "androidBuild": "passed",
   "apkVerification": "apk-verification.json",
   "realModel": "not_tested",
   "phoneInstall": "not_tested",
-  "phoneUpgrade": "0.7 identity and signature match checked in APK; actual device update pending; 0.6.1 uses archive migration"
+  "phoneUpgrade": "independent app.zhizhi.personal.v1; keep 0.6.1/0.7/1.0.0 and migrate archives; device validation pending",
+  "regressions": [
+    "archive merge retains memory/event/strategy references and processed event watermarks",
+    "duplicate imported event sequences are rejected without mutation",
+    "concurrently merged events are sorted before settlement",
+    "later failed reinforcement attempt preserves same-version prior passing evidence"
+  ],
+  "buildCompatibility": "public resources copied without cross-user metadata writes; isolated Gradle daemon registry and executable tool extraction; separately retained v1 signing key"
 }

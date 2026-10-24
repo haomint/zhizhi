@@ -50,6 +50,7 @@ export async function featureAction(doc,d,{ask,search,progress}){
  }
  if(k==='strengthen'){
  requireThat(n?.ready,'先准备好这个小节');let result;
+ if(n.reinforcement?.version===n.content_version)return {};
  if(t.demo){requireThat(n.id===t.nodes[0].id,'固定示例只在第一节提供加强演示；正式学习树会按当前小节生成。');result={questions:[{question:'规则 f(x)=2x 中，输入 3 的输出是多少？请简单说明。',criterion:'答案为 6，说明将 3 乘以 2。',example_answer:'f(3)=2×3=6。'}]};}
  else result=await ask('reinforcement',{mode:'generate',node_version:n.content_version,node:{id:n.id,title:n.title,cards:n.cards},materials:t.materials.filter(m=>n.material_ids?.includes(m.id))});
  n.reinforcement={id:uid(),version:n.content_version,questions:result.questions,passed:false,attempts:[],created:now()};return {};
@@ -58,7 +59,7 @@ export async function featureAction(doc,d,{ask,search,progress}){
  requireThat(n?.reinforcement&&n.reinforcement.version===n.content_version,'讲解版本已变化，请重新开始加强学习');requireThat(string(d.answer,4000),'写下一点想法即可');const q=n.reinforcement.questions[0];let result;
  if(t.demo)result={passed:/(?:6|六)/.test(d.answer)&&/(?:2|二|两|乘|×)/.test(d.answer),evidence:'固定示例规则检查，仅适用于当前函数演示题。',explanation:q.example_answer};
  else result=await ask('reinforcement',{mode:'evaluate',node_version:n.content_version,question:q,answer:d.answer,node:{title:n.title,cards:n.cards}});
- n.reinforcement.passed=result.passed;n.reinforcement.attempts.push({answer:d.answer,...result,at:now()});event(s,'reinforcement',t.id,n.id,`${n.title}：${result.passed?'加强检查通过':'尝试加强学习'}，${result.evidence}`);return {assessment:result};
+ n.reinforcement.passed=n.reinforcement.passed||result.passed;n.reinforcement.attempts.push({answer:d.answer,...result,at:now()});event(s,'reinforcement',t.id,n.id,`${n.title}：${result.passed?'加强检查通过':'尝试加强学习'}，${result.evidence}`);return {assessment:result};
  }
  if(k==='revise_route'){
  requireThat(string(d.reason,1000),'请说明希望怎样调整');const result=await ask('roadmap',{title:t.title,goal:t.goal,preferences:t.preferences,reason:d.reason,existing_nodes:t.nodes.map(n=>({id:n.id,title:n.title,status:n.status})),materials:t.materials,memories:remembered(s,t,t.title)});
