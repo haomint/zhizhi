@@ -1,0 +1,21 @@
+{
+  "appId": "app.zhizhi.reacttsprobe",
+  "version": "0.1.0",
+  "signatureVerified": true,
+  "certificateSha256": "399e16614fd3c75cbe9b7c555791815bad3496e33fbbb2561e16cbb3920dd0a8",
+  "apkSha256": "f2b0d2b8e915adf5440830fdab94a75ee0bef860aedf9bba67ee33a5e919e887",
+  "apkBytes": 4260084,
+  "assetsCompared": [
+    "CAPACITOR-ANDROID-LICENSE.txt",
+    "THIRD-PARTY-LICENSES.md",
+    "assets/index-Dc1ENA_z.js",
+    "assets/index-niyfOWWh.css",
+    "index.html"
+  ],
+  "nativeProbeClassBundled": true,
+  "externalDevelopmentServerRequired": false,
+  "package": "package: name='app.zhizhi.reacttsprobe' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+  "minimumSdk": "minSdkVersion:'24'",
+  "nativeRuntimeExecuted": false,
+  "physicalDeviceTested": false
+}
