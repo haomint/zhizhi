@@ -31,7 +31,7 @@ Android 构建还需 JDK 21、Android API 36 和可读取的签名。APK 与源�
 
 ## 协作
 
-远程仓库：[haomint/zhizhi](https://github.com/haomint/zhizhi)（公开）。`main` 受分支保护：只能通过 PR 合入，`web` 检查必须通过后由有权限的成员合并。先开 Issue 并认领，按 `类型/编号-简述` 创建分支，完成检查后通过 Pull Request 合入 `main`，按 PR 模板填写 `Fixes #编号`、测试与 AI 使用说明。规则详见 [AGENTS.md](AGENTS.md)。多人或多个 Agent 使用独立克隆或 worktree。
+远程仓库：[haomint/zhizhi](https://github.com/haomint/zhizhi)（公开）。`main` 受分支保护：只能通过 PR 合入，`web` 检查必须通过后由有权限的成员合并。先开 Issue 并认领（AI agent 不设认领人，用 `agent` 标签标记），按 `类型/编号-简述` 创建分支，完成检查后通过 Pull Request 合入 `main`，按 PR 模板填写 `Fixes #编号`、测试与 AI 使用说明。规则详见 [AGENTS.md](AGENTS.md)。多人或多个 Agent 使用独立克隆或 worktree。
 
 旧 Python 桌面实现已归档在 `outputs/learning-grove/legacy/`。当前应用入口为 `src/main.tsx`，不依赖电脑后台服务。`dist/` 和兼容旧预览的 `static/` 都是生成目录。
 
