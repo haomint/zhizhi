@@ -23,7 +23,12 @@ const rules = {
     ],
   },
   platform: {
-    internal: ["platform", "contracts", "core/domain"],
+    internal: [
+      "platform",
+      "contracts",
+      "core/domain",
+      "../config/providers.json",
+    ],
     external: ["@capacitor/core"],
   },
 };

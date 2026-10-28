@@ -75,7 +75,7 @@ ui/  ──▶  application/service.ts  ──▶  core/
   版本已变化的旧结果必须被拒绝，取消不发布半成品。
 - **数据兼容**：不改 IndexedDB 名 `zhizhi-app`、store `state`、key `document`、
   档案格式 `zhizhi-personal-2`、应用 ID `app.zhizhi.personal`，除非同一改动提供迁移和测试。
-- **密钥**：API Key 不进入档案、日志、测试数据和 Git。模型端点和模型名只在 `config/providers.json` 配置。
+- **密钥**：API Key 不进入档案、日志、测试数据和 Git。安卓存于 Keystore，网页版存于浏览器本地存储（`platform/browser-model.ts`），只由 `platform/` 读写。模型端点和模型名只在 `config/providers.json` 配置。
 - **真实与演示分开**：演示数据在界面上明确标注“演示”；模型生成、搜索结果、实际读取、核对通过是不同状态，不能混用。
 - **失败可恢复**：等待、失败、取消、重试都有用户能理解的状态，并保留用户输入和已保存内容。
 

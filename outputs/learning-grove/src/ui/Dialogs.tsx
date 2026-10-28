@@ -4,10 +4,13 @@ import type { LearningNode, LearningTree, Preferences } from "../contracts.ts";
 import { Field, go, useLearning, value } from "./context.tsx";
 import { preferenceLabels } from "./Intake.tsx";
 
+const testLabels = { untested: "未测试", passed: "已通过", failed: "失败" };
+
 export function Settings() {
-  const { snapshot, act, busy } = useLearning(),
+  const { snapshot, service, busy } = useLearning(),
     [key, setKey] = useState(""),
-    [result, setResult] = useState("");
+    [result, setResult] = useState(""),
+    [saving, setSaving] = useState(false);
   const settings = snapshot.settings;
   return (
     <>
@@ -15,11 +18,7 @@ export function Settings() {
         模型推理需要联网，学习档案保存在本机。Android 中的 Key 由系统 Keystore
         加密保存。
       </p>
-      {!settings.can_remember && (
-        <p className="notice">
-          浏览器用于本地预览，不接收真实 API Key。请在安卓应用中配置模型。
-        </p>
-      )}
+      {settings.notice && <p className="notice">{settings.notice}</p>}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -29,17 +28,28 @@ export function Settings() {
             !(submitter instanceof HTMLButtonElement) ||
             submitter.value !== "save";
           setResult(test ? "正在保存并测试…" : "正在保存…");
-          void act({
-            type: test ? "configure_test" : "configure",
-            key,
-            model: value(f, "model"),
-            base_url: "https://api.deepseek.com",
-            enabled: f.has("enabled"),
-            clear_key: f.has("clear_key"),
-          }).then((r) => {
-            setKey("");
-            setResult(r?.message || "连接未完成，设置与失败原因已保留。");
-          });
+          setSaving(true);
+          // The toast sits under this modal, so failures are shown inline.
+          service
+            .dispatch({
+              type: test ? "configure_test" : "configure",
+              key,
+              model: value(f, "model"),
+              base_url: "https://api.deepseek.com",
+              enabled: f.has("enabled"),
+              clear_key: f.has("clear_key"),
+            })
+            .then(
+              (r) => setResult(r.message || "设置已保存。"),
+              (error) =>
+                setResult(
+                  "连接未完成：" + errorMessage(error) + " 设置已保留。",
+                ),
+            )
+            .finally(() => {
+              setKey("");
+              setSaving(false);
+            });
         }}
       >
         <label className="field">
@@ -76,17 +86,17 @@ export function Settings() {
           地址：https://api.deepseek.com · 密钥不包含在学习档案中
         </p>
         <p role="status">
-          {result || settings.notice || "连接状态：" + settings.test_status}
+          {result || "连接状态：" + testLabels[settings.test_status]}
         </p>
         <div className="actions">
           <button
             className="primary"
-            disabled={busy || !settings.can_remember}
+            disabled={busy || saving || !settings.can_remember}
             value="test"
           >
             保存并测试连接
           </button>
-          <button disabled={busy} value="save">
+          <button disabled={busy || saving} value="save">
             仅保存
           </button>
         </div>

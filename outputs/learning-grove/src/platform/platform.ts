@@ -2,6 +2,7 @@ import { Capacitor, registerPlugin } from "@capacitor/core";
 import { list, record, requireThat } from "../contracts.ts";
 import type { Material, ModelPayload } from "../contracts.ts";
 import { material, uid } from "../core/domain.ts";
+import { createBrowserModel } from "./browser-model.ts";
 export interface Platform {
   native: boolean;
   status(): Promise<{ configured: boolean }>;
@@ -59,22 +60,20 @@ export function createPlatform(): Platform {
     requireThat(response.ok, "应用资源读取失败：" + path);
     return response.text();
   };
-  const noModel = () => {
-    throw Error("浏览器预览仅支持本地功能；请在安卓应用中设置模型 Key。");
-  };
+  const browser = createBrowserModel(() => localStorage);
   return {
     native,
-    status: () =>
-      native ? plugin.status() : Promise.resolve({ configured: false }),
+    status: () => (native ? plugin.status() : browser.status()),
     configure: async (key) => {
-      if (!native) noModel();
+      if (!native) return browser.configure(key);
       await plugin.configure({ key });
     },
     clearKey: async () => {
       if (native) await plugin.clearKey();
+      else await browser.clearKey();
     },
     complete: async (payload, signal) => {
-      if (!native) return noModel();
+      if (!native) return browser.complete(payload, signal);
       const requestId = uid();
       const cancel = () => {
         void plugin.cancel({ requestId }).catch(() => {});
@@ -88,7 +87,7 @@ export function createPlatform(): Platform {
       }
     },
     test: async (model) => {
-      if (!native) noModel();
+      if (!native) return browser.test(model);
       await plugin.generate({ model, system: "只回复OK", topic: "连接测试" });
     },
     search: async (query) => {

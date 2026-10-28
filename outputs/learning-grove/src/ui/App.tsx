@@ -249,10 +249,22 @@ export function App({ service }: { service: LearningService }) {
                 "学习空间"}
             </span>
             <button
-              className={"badge " + (snapshot.settings.enabled ? "live" : "")}
+              className={
+                "badge " +
+                (snapshot.settings.enabled &&
+                snapshot.settings.test_status === "passed"
+                  ? "live"
+                  : "")
+              }
               onClick={() => open(<Settings />, "模型设置")}
             >
-              {snapshot.settings.enabled ? "模型已连接" : "本地 / 演示"}
+              {!snapshot.settings.enabled
+                ? "本地 / 演示"
+                : {
+                    passed: "模型已连接",
+                    failed: "模型连接失败",
+                    untested: "模型未测试",
+                  }[snapshot.settings.test_status]}
             </button>
           </header>
           <main id="main">
