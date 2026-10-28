@@ -1,0 +1,35 @@
+{
+  "checks": [
+    "generated card emphasis and line breaks render as readable text instead of raw markers",
+    "five-page draft uses two coherent batch requests, preserving variable card counts",
+    "accepted requirements, materials and preferences reach actual card generation",
+    "hierarchical outline retains 9 sections; 5-card section is published only after review",
+    "reading goes directly from 5 cards to 2 cards and the next required section, without quiz UI or requests",
+    "a narrow accepted goal retains a one-section route",
+    "malformed review response is retried once without rewriting cards",
+    "persistent review-output failure automatically opens complete drafts as unverified without blocking reading",
+    "semantic review failure blocks publication, two automatic repair rounds run, user retry succeeds",
+    "non-actionable review cannot trap readable content after calibration",
+    "interrupted local repair survives refresh, preserves corrected pages and resumes remaining page only",
+    "canonical source false positive triggers one evidence review and no draft rewrites",
+    "optional wording suggestions allow reading without a repair loop",
+    "provider output truncation reduces batch size automatically and retains full scope",
+    "explicit feedback regenerates unread content, stale task is rejected, current published text stays stable",
+    "network failure keeps drafts; refresh retry resumes without regenerating saved cards",
+    "storage failure is visible and blocks unsaved content generation",
+    "saved complete drafts recover automatically as unverified, without imposing a learning check",
+    "legacy failed quiz cannot block route completion, which survives refresh and reopening",
+    "mobile typography supports semantic paragraphs, restrained emphasis and safe literal HTML",
+    "mobile and desktop rendering without uncaught browser errors"
+  ],
+  "requests": {
+    "blueprint": 28,
+    "cards": 35,
+    "review": 26,
+    "qa": 1,
+    "card": 7
+  },
+  "pageErrors": [],
+  "at": "2026-10-25T14:45:54.911Z",
+  "result": "PASS"
+}

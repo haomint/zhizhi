@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "checks": [
+    "first card disables Previous; second card returns to first and saves its position",
+    "backward and forward positions both survive refresh and reopening",
+    "first card of a new section returns to the last read card, skipping an unread optional section",
+    "completed route can return to its last card and preserve that position across refresh",
+    "backward navigation keeps forward reading and final completion usable without a quiz",
+    "three reading controls fit mobile and desktop without horizontal overflow"
+  ],
+  "pageErrors": [],
+  "at": "2026-10-25T14:45:54.506Z"
+}

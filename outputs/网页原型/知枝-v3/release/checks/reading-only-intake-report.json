@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "single centered topic field, topic alone enables completion, four choices and instant required-question navigation",
+    "question and selected answers survive refresh; every follow-up uses choices only",
+    "final Complete saves one goal, shows a compact brief immediately and starts planning with actual answers",
+    "editing creates a revised learning goal while preserving the original goal and initial details",
+    "high-impact optional question follows the same tap flow and explicit preference reaches route generation",
+    "eight-question hard cap, skipped fields never recur, unknowns remain unknown in the final brief",
+    "going back and revising an earlier answer clears dependent answers and extra questions",
+    "optional question service failure allows retry or completion without duplicating answers",
+    "legacy intake draft migrates into the new form while retaining its provided materials",
+    "storage failure prevents advancing or sending an unsaved answer",
+    "mobile and desktop layouts and fixed standalone entrypoint load without browser errors"
+  ],
+  "pageErrors": [],
+  "at": "2026-10-25T14:47:54.636Z",
+  "result": "PASS"
+}
