@@ -20,6 +20,24 @@
 | [outputs/learning-grove/README.md](outputs/learning-grove/README.md) | 正式应用的模块清单与运行方式 |
 | `outputs/知枝-*.md` | 历史策划与验收记录，只作参考；与最新策划冲突时以最新策划为准 |
 
+### v3 参考版本（用户验收确认的体验）
+
+网页 1.0.1（“连续阅读版”）是用户确认的体验基准：居中单输入框、选择题补问、
+无测验的连续阅读、“上一张”与跨已读小节回看。它是**打包后的单个 HTML 文件**，
+存放在 `chore/upload-web-main-1.0.1` 分支，源码不在仓库里。它只作效果参考：
+把其中的体验迁移进 `learning-grove`，不在它上面继续开发，也不复制它的代码。
+
+在仓库根目录取出并打开（`.v3-reference/` 已被忽略）：
+
+```bash
+git fetch origin chore/upload-web-main-1.0.1
+mkdir -p .v3-reference
+git show "origin/chore/upload-web-main-1.0.1:outputs/网页原型/知枝-v3/release/index.html" > .v3-reference/index.html
+cd outputs/learning-grove && npx vite ../../.v3-reference --port 4184
+```
+
+浏览器打开 `http://localhost:4184/`。
+
 ## 目录
 
 ```
@@ -81,14 +99,31 @@ ui/  ──▶  application/service.ts  ──▶  core/
 
 ## 工作流程
 
-1. 每个任务开一个分支：`feat/…`、`fix/…`、`refactor/…`、`docs/…`、`chore/…`。
-2. 动手前先写下**验收条件**：用户怎么操作、看到什么结果。
-3. 新功能和 bug 修复都要带测试；修 bug 先写一个在修复前失败的测试。
-4. 每次只做一段已经讨论过的体验，不顺手做无关的大重构。
-5. 提交前在 `outputs/learning-grove` 跑 `npm run check`，全部通过再提交。
-6. 通过 PR 合入 `main`，按 `.github/pull_request_template.md` 填写，包括 AI 使用说明。
-7. 改了架构或开发规则，同一个 PR 里更新本文件和 `docs/工程架构与开发规范.md`；
+1. **先有 Issue 再动手**。Issue 写清要做什么和**验收条件**（用户怎么操作、看到什么结果）。
+2. **认领**：在 Issue 里把自己设为 Assignee。已有 Assignee 的 Issue 不要做；
+   AI agent 认领时用操作者的账号，并加 `agent` 标签。
+3. **一个 Issue 一个分支一个 PR**。开工前同步 `main`，分支名带 Issue 编号：
+   `类型/编号-简述`，类型为 `feat`、`fix`、`refactor`、`docs`、`chore`，例如 `feat/12-web-model`。
+4. 新功能和 bug 修复都要带测试；修 bug 先写一个在修复前失败的测试。
+5. 每次只做一段已经讨论过的体验，不顺手做无关的大重构。
+6. 提交前在 `outputs/learning-grove` 跑 `npm run check`，全部通过再提交。
+7. 按 `.github/pull_request_template.md` 开 PR，描述第一行写 `Fixes #编号`，填好 AI 使用说明。
+8. 改了架构或开发规则，同一个 PR 里更新本文件和 `docs/工程架构与开发规范.md`；
    改了用户能看到的行为，同步更新 `outputs/learning-grove/README.md`。
+
+## 多人协作
+
+团队 4 人，另有多个 AI agent 参与。`main` 的合并条件（GitHub 规则强制）：
+
+- CI 的 `web` 检查通过；
+- 至少 **1 位其他成员** Approve。作者不能批准自己的 PR；
+  AI agent 开的 PR 由人类队友审核，审核人要实际试用验收条件里的操作。
+
+避免冲突：
+
+- 开工前看一眼进行中的 PR，同一模块已有人在改时，先在 Issue 里沟通再动手。
+- 共享文件（`src/contracts.ts`、`AGENTS.md`、`package.json`）的改动尽量小、尽快合并。
+- PR 合并后删除分支，本地切回 `main` 并 `git pull`。
 
 ## 策划案维护
 
@@ -103,3 +138,4 @@ ui/  ──▶  application/service.ts  ──▶  core/
 - 不修改 `legacy/`、`experiments/`、`outputs/pi-mobile-probe/`、`android/`（本轮）。
 - 不为了让检查通过而删测试、放宽类型或改架构测试；先修代码，确需改规则时在 PR 里写明理由。
 - 不提交 `node_modules/`、`dist/`、签名文件、数据库和安装包。
+- AI agent 不合并、不批准 PR，不修改仓库设置和分支规则，不做未认领或别人已认领的 Issue。
