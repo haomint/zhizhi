@@ -1,0 +1,33 @@
+name: Check
+
+# Same gate as `npm run check` locally: format, tests (incl. architecture rules),
+# strict typecheck, production build, doctor. PRs must pass before merging.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: outputs/learning-grove
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: outputs/learning-grove/package-lock.json
+
+      - run: npm ci
+      - run: npm run check

@@ -12,7 +12,7 @@ npm run dev
 npm run check
 ```
 
-`check` 依次执行 Prettier 检查、28 项自动测试、TS 类型检查、Vite 生产构建和工程核对。每项测试覆盖现有学习行为或迁移风险，不把编译通过当成学习效果证明。
+`check` 依次执行 Prettier 检查、32 项自动测试（含 `tests/architecture.test.mjs` 分层检查）、TS 类型检查、Vite 生产构建和工程核对。每项测试覆盖现有学习行为或迁移风险，不把编译通过当成学习效果证明。
 
 ```bash
 npm run preview -- --port 5175
