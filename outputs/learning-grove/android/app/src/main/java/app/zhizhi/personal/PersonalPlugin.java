@@ -20,16 +20,19 @@ public class PersonalPlugin extends Plugin {
     @PluginMethod public void searchMaterials(PluginCall call){
         String query=call.getString("query", "").trim();
         if(query.isEmpty()||query.length()>160){call.reject("检索词需要 1—160 字。");return;}
+        final int pageid=call.getInt("pageid",0);
+        if(pageid<0){call.reject("条目编号无效。");return;}
         getBridge().execute(()->{
             HttpURLConnection conn=null;
             try {
                 String encoded=java.net.URLEncoder.encode(query,"UTF-8");
-                String address="https://zh.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=0&gsrlimit=3&prop=extracts&exintro=1&explaintext=1&exlimit=3&exchars=1200&gsrsearch="+encoded;
+                String base="https://zh.wikipedia.org/w/api.php?action=query&format=json&utf8=1&variant=zh-cn&prop=extracts&explaintext=1";
+                String address=pageid>0?base+"&pageids="+pageid:base+"&generator=search&gsrnamespace=0&gsrlimit=3&exintro=1&exlimit=3&gsrsearch="+encoded;
                 conn=(HttpURLConnection)new URL(address).openConnection();conn.setInstanceFollowRedirects(false);conn.setConnectTimeout(12000);conn.setReadTimeout(20000);
                 conn.setRequestProperty("User-Agent","ZhizhiLearning/1.0 (personal educational Android application)");
                 if(conn.getResponseCode()!=200){call.reject("百科服务暂不可用，请换关键词或导入文字材料。");return;}
                 try(java.io.InputStream in=conn.getInputStream();java.io.ByteArrayOutputStream buffer=new java.io.ByteArrayOutputStream()){
-                    byte[] chunk=new byte[8192];int n;while((n=in.read(chunk))!=-1){buffer.write(chunk,0,n);if(buffer.size()>250000)throw new Exception();}
+                    byte[] chunk=new byte[8192];int n;while((n=in.read(chunk))!=-1){buffer.write(chunk,0,n);if(buffer.size()>(pageid>0?800000:250000))throw new Exception();}
                     call.resolve(new JSObject(buffer.toString("UTF-8")));
                 }
             }catch(Exception e){call.reject("资料检索失败，请检查网络或导入文字材料。");}

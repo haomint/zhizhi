@@ -28,10 +28,12 @@ interface PersonalPlugin {
     system: string;
     topic: string;
   }): Promise<unknown>;
-  searchMaterials(input: { query: string }): Promise<unknown>;
+  searchMaterials(input: { query: string; pageid?: number }): Promise<unknown>;
   exportBackup(input: { text: string }): Promise<void>;
 }
-export function parseSearch(raw: unknown): Material[] {
+const TAIL_SECTIONS =
+  /\n==+\s*(?:参考文献|参考资料|参考来源|外部链接|外部連結|注释|註釋|延伸阅读|参见|參見)\s*==+[\s\S]*$/;
+export function parseSearch(raw: unknown, full = false): Material[] {
   const response = record(raw);
   requireThat(!response.error, "百科服务暂不可用，请导入文字材料");
   const query = response.query ? record(response.query) : {};
@@ -39,13 +41,15 @@ export function parseSearch(raw: unknown): Material[] {
   return pages
     .map(record)
     .filter((p) => typeof p.extract === "string" && typeof p.title === "string")
+    .sort((a, b) => (Number(a.index) || 0) - (Number(b.index) || 0))
     .slice(0, 3)
     .map((p) =>
       material({
         title: String(p.title),
-        text: String(p.extract).slice(0, 24000),
+        text: String(p.extract).replace(TAIL_SECTIONS, "").slice(0, 24000),
         url: "https://zh.wikipedia.org/?curid=" + String(p.pageid),
-        location: "条目导言；pageid=" + String(p.pageid),
+        location:
+          (full ? "条目全文" : "条目导言") + "；pageid=" + String(p.pageid),
         kind: "wikipedia",
         license: "Wikipedia 贡献者，CC BY-SA；仅供学习参考",
       }),
@@ -92,22 +96,51 @@ export function createPlatform(): Platform {
       await plugin.generate({ model, system: "只回复OK", topic: "连接测试" });
     },
     search: async (query) => {
-      if (native) return parseSearch(await plugin.searchMaterials({ query }));
-      const url = new URL("https://zh.wikipedia.org/w/api.php");
-      url.search = new URLSearchParams({
-        action: "query",
-        generator: "search",
-        gsrsearch: query,
-        gsrlimit: "3",
-        prop: "extracts",
-        exintro: "1",
-        explaintext: "1",
-        format: "json",
-        origin: "*",
-      }).toString();
-      const response = await fetch(url, { signal: AbortSignal.timeout(20000) });
-      requireThat(response.ok, "百科检索失败，请导入文字材料");
-      return parseSearch(await response.json());
+      const wiki = async (params: Record<string, string>) => {
+        const url = new URL("https://zh.wikipedia.org/w/api.php");
+        url.search = new URLSearchParams({
+          action: "query",
+          prop: "extracts",
+          explaintext: "1",
+          variant: "zh-cn",
+          format: "json",
+          utf8: "1",
+          origin: "*",
+          ...params,
+        }).toString();
+        const response = await fetch(url, {
+          signal: AbortSignal.timeout(20000),
+        });
+        requireThat(response.ok, "百科检索失败，请导入文字材料");
+        return response.json() as Promise<unknown>;
+      };
+      const results = parseSearch(
+        native
+          ? await plugin.searchMaterials({ query })
+          : await wiki({
+              generator: "search",
+              gsrsearch: query,
+              gsrnamespace: "0",
+              gsrlimit: "3",
+              exintro: "1",
+            }),
+      );
+      // 导言通常只有几百字，为排名第一的条目补取全文；失败时保留导言。
+      const pageid = Number(results[0]?.url.split("curid=")[1]);
+      if (pageid)
+        try {
+          const [full] = parseSearch(
+            native
+              ? await plugin.searchMaterials({ query, pageid })
+              : await wiki({ pageids: String(pageid) }),
+            true,
+          );
+          if (full && full.text.length > results[0].text.length)
+            results[0] = { ...full, id: results[0].id };
+        } catch {
+          // 保留导言
+        }
+      return results;
     },
     loadRule: (name) => textResource("skills/" + name + ".md"),
     loadDemo: async () =>

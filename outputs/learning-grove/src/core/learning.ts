@@ -30,6 +30,72 @@ import {
   string,
   importArchive,
 } from "./domain.ts";
+const PASSAGE_CHARS = 900,
+  MATERIAL_BUDGET = 9000,
+  MIN_PAGE_CHARS = 150;
+function terms(text: string): Set<string> {
+  const out = new Set<string>();
+  for (const run of text.toLowerCase().match(/[一-鿿]+/g) || [])
+    for (let i = 0; i + 1 < run.length; i++) out.add(run.slice(i, i + 2));
+  for (const word of text.toLowerCase().match(/[a-z0-9]{2,}/g) || [])
+    out.add(word);
+  return out;
+}
+// 按小节标题与说明挑选相关段落，而不是固定读取最近材料的开头。
+export function selectPassages(
+  materials: Material[],
+  query: string,
+  budget = MATERIAL_BUDGET,
+): Material[] {
+  const wanted = terms(query);
+  const passages = materials.flatMap((m) => {
+    const chunks: string[] = [];
+    let current = "";
+    for (const para of m.text.split(/\n+/)) {
+      if (current && current.length + para.length > PASSAGE_CHARS) {
+        chunks.push(current);
+        current = "";
+      }
+      current += (current ? "\n" : "") + para;
+      while (current.length > PASSAGE_CHARS * 2) {
+        chunks.push(current.slice(0, PASSAGE_CHARS));
+        current = current.slice(PASSAGE_CHARS);
+      }
+    }
+    if (current.trim()) chunks.push(current);
+    return chunks.map((text, index) => {
+      const own = terms(text);
+      let score = 0;
+      for (const w of wanted) if (own.has(w)) score++;
+      return { m, index, total: chunks.length, text, score };
+    });
+  });
+  const picked: typeof passages = [];
+  let used = 0;
+  for (const p of passages
+    .filter((p) => p.score > 0)
+    .sort((a, b) => b.score - a.score)) {
+    if (used + p.text.length > budget) continue;
+    picked.push(p);
+    used += p.text.length;
+  }
+  return materials.flatMap((m) => {
+    const own = picked
+      .filter((p) => p.m === m)
+      .sort((a, b) => a.index - b.index);
+    if (!own.length) return [];
+    const whole = own.length === own[0].total;
+    return [
+      {
+        ...m,
+        text: own.map((p) => p.text).join("\n……\n"),
+        location: whole
+          ? m.location
+          : `${m.location}（按相关性节选第 ${own.map((p) => p.index + 1).join("、")} 段，共 ${own[0].total} 段）`,
+      },
+    ];
+  });
+}
 export async function generate(
   s: LearningState,
   t: LearningTree,
@@ -38,28 +104,47 @@ export async function generate(
   search: (query: string) => Promise<Material[]>,
   progress: (label: string) => void = () => {},
 ): Promise<ActionResult> {
+  const index = t.nodes.indexOf(n);
+  const query = [n.title, n.description, t.title].join(" ");
   const brief = {
     tree: { title: t.title, goal: t.goal, preferences: t.preferences },
     nodes: [{ id: n.id, title: n.title, description: n.description }],
+    route: {
+      previous: t.nodes.slice(Math.max(0, index - 2), index).map((x) => ({
+        title: x.title,
+        read: x.status !== "unseen",
+      })),
+      next: t.nodes.slice(index + 1, index + 3).map((x) => x.title),
+    },
     memories: remembered(s, t, n.title + " " + t.title),
     strategies: s.strategies.filter((x) => x.tree_id === t.id),
-    materials: t.materials.slice(-3).map((m) => ({
-      ...m,
-      text: m.text.slice(0, 4000),
-      location:
-        m.location + (m.text.length > 4000 ? "（本次读取前 4000 字）" : ""),
-    })),
+    materials: selectPassages(t.materials, query),
   };
+  // 新检索到的全文另存，brief 中只放节选。
+  let fetched: Material[] = [];
   let retrieval = "provided";
   if (!brief.materials.length && t.search_enabled) {
     progress("正在查找资料");
     try {
-      brief.materials = await search(n.title);
+      fetched = await search(n.title);
+      brief.materials = selectPassages(fetched, query);
+      if (!brief.materials.length)
+        brief.materials = selectPassages(
+          fetched,
+          n.title + " " + fetched.map((m) => m.title).join(" "),
+        );
       retrieval = "wikipedia";
     } catch (e) {
       retrieval = "检索失败：" + errorMessage(e);
     }
   }
+  if (!brief.materials.length)
+    brief.materials = [...t.materials, ...fetched].slice(-3).map((m) => ({
+      ...m,
+      text: m.text.slice(0, 4000),
+      location:
+        m.location + (m.text.length > 4000 ? "（本次读取前 4000 字）" : ""),
+    }));
   requireThat(
     brief.materials.length > 0,
     "当前节点没有可读取的材料。请在“学习资料”中检索或添加教材片段后重试。",
@@ -73,13 +158,15 @@ export async function generate(
   ) {
     progress("正在补查核心缺口");
     try {
-      const extra = await search(
-        (knowledge.gaps.find((g) => g.critical)?.question || n.title).slice(
-          0,
-          160,
-        ),
-      );
-      brief.materials = [...brief.materials, ...extra].slice(-3);
+      const gap = (
+        knowledge.gaps.find((g) => g.critical)?.question || n.title
+      ).slice(0, 160);
+      const extra = await search(gap);
+      fetched = [...fetched, ...extra];
+      brief.materials = [
+        ...brief.materials,
+        ...selectPassages(extra, gap + " " + query, MATERIAL_BUDGET / 2),
+      ].slice(-4);
       retrieval = "wikipedia-gap";
       knowledge = await ask("knowledge", brief);
     } catch (e) {
@@ -98,11 +185,36 @@ export async function generate(
   );
   let cards: StageResults["cards"]["cards"] = [],
     quality: QualityResult | undefined;
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0, lengthRetry = 0; attempt < 2 + lengthRetry; attempt++) {
     progress(attempt ? "正在修正讲解" : "正在编写定义与例子");
     cards = (
       await ask("cards", { ...brief, knowledge, plan, repair: quality || null })
     ).cards;
+    // 篇幅由程序判断，不交给模型自评：过短的页通常只复述了定义。
+    const thin = cards.filter(
+      (c) => c.text.replace(/\s/g, "").length < MIN_PAGE_CHARS,
+    );
+    if (thin.length && !lengthRetry) {
+      lengthRetry = 1;
+      quality = {
+        decision: "revise",
+        checks: {
+          goal: true,
+          prerequisites: true,
+          definitions: true,
+          examples: true,
+          sequence: true,
+          sources: true,
+          burden: false,
+        },
+        issues: thin.map((c) => ({
+          severity: "core",
+          reason: `“${c.title}”只有 ${c.text.replace(/\s/g, "").length} 字，讲不透`,
+          repair: `扩写到 250—500 字：补上原因、条件或机制，并用材料中的具体事实、数字或场景说明；内容确实单薄就并入相邻页`,
+        })),
+      };
+      continue;
+    }
     progress("正在检查内容");
     quality = await ask("quality", { ...brief, knowledge, plan, cards });
     if (quality.decision === "pass") break;
@@ -141,8 +253,12 @@ export async function generate(
     material_version: t.material_version,
     strategy_version: t.strategy_version,
   };
-  for (const m of brief.materials)
-    if (!t.materials.some((x) => x.id === m.id)) t.materials.push(m);
+  for (const m of fetched)
+    if (
+      brief.materials.some((x) => x.id === m.id) &&
+      !t.materials.some((x) => x.id === m.id)
+    )
+      t.materials.push(m);
   n.material_readings = brief.materials.map((m) => ({
     id: m.id,
     location: m.location,

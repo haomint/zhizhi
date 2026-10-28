@@ -9,7 +9,11 @@ import {
   validateArchive,
   activeEvents,
 } from "../src/core/domain.ts";
-import { generate, featureAction } from "../src/core/learning.ts";
+import {
+  generate,
+  featureAction,
+  selectPassages,
+} from "../src/core/learning.ts";
 import { validateResult } from "../src/core/validate.ts";
 function state() {
   return migrate({
@@ -52,9 +56,11 @@ const checks = Object.fromEntries(
     "burden",
   ].map((k) => [k, true]),
 );
-function model(record, fail = false) {
+const long = (text) => text + "函数把每个输入对应到唯一输出。".repeat(12);
+function model(record, fail = false, thin = false) {
   return async (stage, c) => {
     record.push(stage);
+    const short = thin && !c.repair;
     const results = {
       knowledge: {
         decision: "ready",
@@ -78,8 +84,18 @@ function model(record, fail = false) {
       },
       cards: {
         cards: [
-          { node_id: "n", kind: "定义诠释", title: "函数", text: "唯一输出" },
-          { node_id: "n", kind: "例子", title: "例子", text: "f(3)=6" },
+          {
+            node_id: "n",
+            kind: "定义诠释",
+            title: "函数",
+            text: short ? "唯一输出" : long("唯一输出"),
+          },
+          {
+            node_id: "n",
+            kind: "例子",
+            title: "例子",
+            text: short ? "f(3)=6" : long("f(3)=6"),
+          },
         ],
       },
       quality: {
@@ -115,6 +131,49 @@ test("quality revision is bounded and leaves old node untouched", async () => {
   );
   assert.equal(calls.filter((x) => x === "cards").length, 2);
   assert.equal(JSON.stringify(n), before);
+});
+test("thin pages get one program-side repair that does not use up the model revision", async () => {
+  const s = state(),
+    t = s.trees[0],
+    n = t.nodes[0],
+    calls = [],
+    contexts = [];
+  const base = model(calls, false, true);
+  await generate(
+    s,
+    t,
+    n,
+    async (stage, c) => {
+      contexts.push(c);
+      return base(stage, c);
+    },
+    async () => [],
+  );
+  assert.deepEqual(calls, [
+    "knowledge",
+    "page-plan",
+    "cards",
+    "cards",
+    "quality",
+  ]);
+  assert.match(contexts[3].repair.issues[0].reason, /只有 4 字/);
+  assert.ok(n.cards.every((c) => c.text.length >= 150));
+});
+test("material selection reads passages relevant to the node, not the opening", () => {
+  const filler = "这一段讲的是天气和饮食，与主题无关。".repeat(60);
+  const m = material({
+    title: "长教材",
+    text: [
+      filler,
+      "导数描述函数在某一点的瞬时变化率，是切线斜率。",
+      filler,
+    ].join("\n"),
+  });
+  const [picked] = selectPassages([m], "导数 变化率");
+  assert.match(picked.text, /瞬时变化率/);
+  assert.ok(picked.text.length < m.text.length);
+  assert.match(picked.location, /按相关性节选/);
+  assert.equal(selectPassages([m], "量子力学").length, 0);
 });
 test("no material and failed retrieval blocks publishing", async () => {
   const s = state(),
