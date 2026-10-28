@@ -1,6 +1,6 @@
 # 知枝 1.1.0 · React + TypeScript
 
-这是正式应用的 TS/React 迁移版。界面为 React，学习、记忆、任务调度和 Pi 适配为严格 TypeScript；沿用 Capacitor Android 与必要 Java 原生插件。手机独立运行，模型经 DeepSeek API 联网推理，档案存本地 IndexedDB，Key 由 Android Keystore 加密。
+这是正式应用的 TS/React 迁移版。界面为 React，学习、记忆、任务调度和 Pi 适配为严格 TypeScript；沿用 Capacitor Android 与必要 Java 原生插件。手机独立运行，模型经 DeepSeek API 联网推理，档案存本地 IndexedDB；Key 在安卓由 Android Keystore 加密，在网页版以明文保存在浏览器本地存储（`src/platform/browser-model.ts`），两者都不进入学习档案。
 
 ## 运行与检查
 
@@ -12,7 +12,7 @@ npm run dev
 npm run check
 ```
 
-`check` 依次执行 Prettier 检查、32 项自动测试（含 `tests/architecture.test.mjs` 分层检查）、TS 类型检查、Vite 生产构建和工程核对。每项测试覆盖现有学习行为或迁移风险，不把编译通过当成学习效果证明。
+`check` 依次执行 Prettier 检查、39 项自动测试（含 `tests/architecture.test.mjs` 分层检查）、TS 类型检查、Vite 生产构建和工程核对。每项测试覆盖现有学习行为或迁移风险，不把编译通过当成学习效果证明。
 
 ```bash
 npm run preview -- --port 5175
@@ -38,6 +38,7 @@ src/
   platform/
     repository.ts           保持原名的 IndexedDB 存储
     platform.ts             Android / 浏览器能力适配
+    browser-model.ts        网页版直连模型：Key 存本机、请求校验、错误映射
 skills/                     十二份教学规则的唯一源码
 public/demo.json            明确标注的固定演示
 android/                    Capacitor 与现有原生插件

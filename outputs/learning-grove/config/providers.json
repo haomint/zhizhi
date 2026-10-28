@@ -3,7 +3,7 @@
     "provider": "deepseek",
     "baseUrl": "https://api.deepseek.com",
     "defaultModel": "deepseek-flash",
-    "keyStorage": "Android Keystore; no key in config"
+    "keyStorage": "Android Keystore on Android; browser localStorage on web; never in config or the learning archive"
   },
   "retrieval": {
     "provider": "wikipedia-zh",

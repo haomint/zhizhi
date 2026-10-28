@@ -209,11 +209,14 @@ export class LearningService {
     return {
       ...this.document.settings,
       has_key: this.keyConfigured,
-      can_remember: this.platform.native,
+      can_remember: true,
       enabled: this.document.settings.enabled && this.keyConfigured,
-      remember: this.platform.native,
+      remember: true,
       ...(!this.platform.native
-        ? { notice: "浏览器本地预览；真实模型与密钥在安卓应用中使用。" }
+        ? {
+            notice:
+              "网页版：Key 以明文保存在本浏览器，请求直接发往 DeepSeek，不经过其他服务器。请勿在公共电脑上保存。",
+          }
         : {}),
     };
   }
