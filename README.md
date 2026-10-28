@@ -31,8 +31,12 @@ Android 构建还需 JDK 21、Android API 36 和可读取的签名。APK 与源�
 
 ## 协作
 
-远程仓库：[Zhangchenhao-111/zhizhi](https://github.com/Zhangchenhao-111/zhizhi)（私有）。按任务创建 `feat/…`、`fix/…` 或 `refactor/…` 分支，说明验收条件，完成检查后通过 Pull Request 合入 `main`，按 PR 模板填写测试与 AI 使用说明。规则详见 [AGENTS.md](AGENTS.md)。多人或多个 Agent 使用独立克隆或 worktree。
+远程仓库：[haomint/zhizhi](https://github.com/haomint/zhizhi)（公开）。`main` 受分支保护：只能通过 PR 合入，且 `web` 检查必须通过。按任务创建 `feat/…`、`fix/…` 或 `refactor/…` 分支，说明验收条件，完成检查后通过 Pull Request 合入 `main`，按 PR 模板填写测试与 AI 使用说明。规则详见 [AGENTS.md](AGENTS.md)。多人或多个 Agent 使用独立克隆或 worktree。
 
 旧 Python 桌面实现已归档在 `outputs/learning-grove/legacy/`。当前应用入口为 `src/main.tsx`，不依赖电脑后台服务。`dist/` 和兼容旧预览的 `static/` 都是生成目录。
 
 API Key、签名私钥、本地数据库、依赖缓存和安装包不进入 Git。稳定 v1 签名仍在被忽略的 `work/release-signing/`，请单独保存；换机器通过 `ZHIZHI_DEBUG_KEYSTORE` 指定同一签名。Git 源码回退不等于手机数据回退。
+
+## 许可证
+
+本项目以 [MIT 许可证](LICENSE)开源。第三方依赖的许可证见 `outputs/learning-grove/LICENSES/` 与 `outputs/learning-grove/THIRD-PARTY-NOTICES.md`。
