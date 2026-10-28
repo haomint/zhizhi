@@ -99,10 +99,14 @@ ui/  ──▶  application/service.ts  ──▶  core/
 
 ## 工作流程
 
-1. **先有 Issue 再动手**。Issue 写清要做什么和**验收条件**（用户怎么操作、看到什么结果）。
-2. **认领**：成员在 Issue 里把自己设为 Assignee，已有 Assignee 的 Issue 不要做。
-   AI agent 不设 Assignee（不占用成员的名字），只加 `agent` 标签表示“AI 在做”；
-   带 `agent` 标签的 Issue，成员和其他 agent 都不要重复做。
+1. **先有任务再动手**。任务就是 Issue，用「任务」模板开，写清要做什么、**验收条件**
+   （用户怎么操作、看到什么结果）、不做什么、难度和依赖。新任务不设 Assignee，加 `待认领`。
+2. **认领**（只由人认领）：
+   - 从带 `待认领` 的任务里挑，依赖都完成了再领；带 `需要讨论` 的先在评论里讨论，不领。
+   - 把自己设为 Assignee，去掉 `待认领`。已有 Assignee 的任务不要做。
+   - 每人同时最多领 **2** 个；领了做不了，取消自己的 Assignee 并加回 `待认领`，在评论里说明进度。
+   - 认领人可以把任务交给 AI agent 做，但 Assignee 仍是这个人，由他检查结果并负责；
+     这样的 PR 加 `agent` 标签。
 3. **一个 Issue 一个分支一个 PR**。开工前同步 `main`，分支名带 Issue 编号：
    `类型/编号-简述`，类型为 `feat`、`fix`、`refactor`、`docs`、`chore`，例如 `feat/12-web-model`。
 4. 新功能和 bug 修复都要带测试；修 bug 先写一个在修复前失败的测试。
@@ -137,4 +141,5 @@ AI agent 开的 PR，合并前由人类成员实际试用验收条件里的操�
 - 不修改 `legacy/`、`experiments/`、`outputs/pi-mobile-probe/`、`android/`（本轮）。
 - 不为了让检查通过而删测试、放宽类型或改架构测试；先修代码，确需改规则时在 PR 里写明理由。
 - 不提交 `node_modules/`、`dist/`、签名文件、数据库和安装包。
-- AI agent 不合并、不批准 PR，不修改仓库设置和分支规则，不做已有 Assignee 或已带 `agent` 标签的 Issue（自己提出的除外）。
+- AI agent 不认领任务，只做认领人明确交给它的任务；不合并、不批准 PR，不修改仓库设置和分支规则。
+  被要求整理任务时，只开 Issue（不设 Assignee、加 `待认领`），不自己去做。
