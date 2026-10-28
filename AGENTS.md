@@ -113,11 +113,9 @@ ui/  ──▶  application/service.ts  ──▶  core/
 
 ## 多人协作
 
-团队 4 人，另有多个 AI agent 参与。`main` 的合并条件（GitHub 规则强制）：
-
-- CI 的 `web` 检查通过；
-- 至少 **1 位其他成员** Approve。作者不能批准自己的 PR；
-  AI agent 开的 PR 由人类队友审核，审核人要实际试用验收条件里的操作。
+团队 4 人，另有多个 AI agent 参与。`main` 只能通过 PR 合入，CI 的 `web` 检查
+通过后才能合并（GitHub 规则强制）。合并由有权限的成员（haomint、G-meng965）执行；
+AI agent 开的 PR，合并前由人类成员实际试用验收条件里的操作。
 
 避免冲突：
 
