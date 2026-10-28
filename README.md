@@ -20,7 +20,7 @@ npm ci
 npm run dev
 ```
 
-提交前执行 `npm run check`，完成格式检查、32 项自动测试（含分层架构检查）、严格类型检查、生产构建和工程核对。GitHub Actions 在每个 PR 上执行同一检查。浏览器预览支持本地阅读和明确标注的演示；真实模型和加密 Key 在安卓应用中使用。
+提交前执行 `npm run check`，完成格式检查、32 项自动测试（含分层架构检查）、严格类型检查、生产构建和工程核对。GitHub Actions 在每个 PR 上执行同一检查，并用 `npm run test:browser` 运行 13 项浏览器场景。浏览器预览支持本地阅读和明确标注的演示；真实模型和加密 Key 在安卓应用中使用。
 
 ```bash
 npm run android:build
