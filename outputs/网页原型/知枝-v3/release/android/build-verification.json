@@ -1,0 +1,17 @@
+{
+  "appId": "app.zhizhi.reading",
+  "appName": "知枝",
+  "version": "1.1.1",
+  "versionCode": 7,
+  "webVersion": "1.0.1",
+  "source": "../reading-only.html",
+  "signing": "独立连续阅读安装版，与旧app.zhizhi.personal.v1共存",
+  "apkPath": "/workspace/知枝/outputs/网页原型/知枝-v3/work/知枝-android-1.1.1.apk",
+  "apkSha256": "60c1a1012a38c70204f36fbc85047959a74af4487fa8b2e7cd3e5622275e5bff",
+  "webSha256": "c57f10e1653eb8b8fdfbe43048315d85d35c9cc5a3b2c79ab4f9aebe836c880b",
+  "apkBytes": 758365,
+  "package": "package: name='app.zhizhi.reading' versionCode='7' versionName='1.1.1' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+  "signatureVerified": true,
+  "certificate": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=Zhizhi Reading, O=Zhizhi, C=CN\nSigner #1 certificate SHA-256 digest: f1f1f607b4d8e4d5b95646f929fb4b45615e8df7806594c4f5286211b565811c\nSigner #1 certificate SHA-1 digest: 688dc6c9aaadaddbe675e9605a74afdecd033770\nSigner #1 certificate MD5 digest: 995b161322aa5e18ab23d4d6a6679269\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 3072\nSigner #1 public key SHA-256 digest: 1423d72cc5796ac330fa6a4b533e89fdd6a53125f88a59e7c9d3020fe6cec8ca\nSigner #1 public key SHA-1 digest: 6c00811e275957343da9ab13ca5cf9434653bd20\nSigner #1 public key MD5 digest: daf6dfdf285359a2c3bc27efa18d5deb\n",
+  "deviceTested": false
+}

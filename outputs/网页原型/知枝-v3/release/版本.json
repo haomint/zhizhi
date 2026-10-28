@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "main",
+  "version": "1.0.1",
+  "baseVersion": "1.0.0",
+  "module": null,
+  "taskId": null,
+  "createdAt": "2026-10-25T14:48:43.053946+00:00",
+  "sourcePath": "/workspace/知枝/outputs/网页原型/知枝-v3/release",
+  "sourceSession": null,
+  "git": {
+    "head": "173582184bc81aec332c140c83f42ffdd34fa273",
+    "branch": "main",
+    "sourceHasUncommittedChanges": true
+  },
+  "note": "用户指定连续阅读版为最新总版本：单框居中、选择题补问、无成果测验、上一张及跨已读小节回看；修正API连接测试并加入安卓原生HTTPS桥接。对应安卓1.1.1。",
+  "verification": "44项浏览器场景通过：API6、需求11、内容21、返回卡片6；模型及Android桥接响应为模拟。安卓APK签名、包名、版本和打入页面字节一致性通过；真实API账号与真机安装未验证。",
+  "packagePath": "/workspace/知枝文件/版本库/主版本/1.0.1/知枝-web-1.0.1.zip"
+}

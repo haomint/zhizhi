@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "Test Connection uses newly entered address, model and key without requiring separate saves",
+    "saved API configuration survives reload and drives follow-up, plan, cards and content-review requests",
+    "401 connection error is visible and retains the previous working configuration",
+    "HTTP 200 without a valid model answer is rejected as a failed connection",
+    "full chat endpoint is accepted without adding a duplicated suffix",
+    "Android native transport receives the same configured URL, key and payload (bridge simulated in Chromium)"
+  ],
+  "pageErrors": [],
+  "model": "intercepted mock responses; no real account",
+  "at": "2026-10-25T14:45:22.643Z",
+  "result": "PASS"
+}

@@ -1,0 +1,50 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const {chromium}=require('/usr/local/lib/node_modules/playwright');
+const BASE=process.argv[2]||'http://localhost:4183/index.html';
+(async()=>{
+ const browser=await chromium.launch({executablePath:'/usr/local/bin/chromium',args:['--no-sandbox']});
+ const report={checks:[],pageErrors:[],model:'intercepted mock responses; no real account',at:new Date().toISOString()};
+ try{
+  const page=await browser.newPage({viewport:{width:390,height:844}});page.on('pageerror',e=>report.pageErrors.push(e.message));
+  let mode='ok',requests=[];
+  await page.route('https://custom.test/**',async route=>{
+   const req=route.request(),body=req.postDataJSON();requests.push({url:req.url(),authorization:req.headers().authorization,body});
+   if(mode==='unauthorized')return route.fulfill({status:401,contentType:'application/json',body:JSON.stringify({error:{message:'invalid key'}})});
+   if(mode==='empty')return route.fulfill({status:200,contentType:'application/json',body:'{}'});
+   const stage=body.messages[0].content.match(/\[stage:(\w+)\]/)?.[1];let out='好';
+   if(stage==='intake_questions')out={question:null};
+   if(stage==='plan')out={description:'输入的API模型生成路线',chapters:[{title:'函数',nodes:[{title:'输入输出',why:'理解唯一输出',minutes:3}]}]};
+   if(stage==='blueprint')out={brief:'唯一输出',points:[{id:'p1',text:'一个输入只有一个输出'}],pages:[{title:'函数',objective:'解释输出',pointIds:['p1']}],blockers:[]};
+   if(stage==='cards')out={cards:JSON.parse(body.messages.at(-1).content).requestedPages.map(p=>({pageIndex:p.pageIndex,card:{title:'由配置的模型生成',lead:'一个输入只有一个输出。',body:['函数把每个允许输入对应到唯一输出。'],example:'设f(x)=x²，输入2得到4。',takeaway:'输出唯一。',pointIds:['p1']}}))};
+   if(stage==='review')out={decision:'pass',checks:{goal:true,prerequisites:true,definitions:true,examples:true,sequence:true,sources:true,burden:true},issues:[]};
+   return route.fulfill({contentType:'application/json',body:JSON.stringify({choices:[{finish_reason:'stop',message:{content:typeof out==='string'?out:JSON.stringify(out)}}]})});
+  });
+  const profile=async()=>{if(await page.locator('[data-screen="tree"].is-active').count())await page.click('[data-screen="tree"] [data-action="back-home"]');await page.click('[data-tab="me"]');};
+  const store=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('zhizhi.v3')));
+  await page.goto(BASE);await page.evaluate(()=>localStorage.clear());await page.reload();await profile();
+  await page.fill('#key-input','test-only-not-a-real-key');await page.fill('#model-input','custom-model');await page.fill('#base-input','https://custom.test/v1/');
+  await page.click('[data-action="test-key"]');await page.waitForFunction(()=>document.querySelector('#key-state').textContent.includes('连接正常'));
+  assert.equal(requests[0].url,'https://custom.test/v1/chat/completions');assert.equal(requests[0].body.model,'custom-model');assert.equal(requests[0].authorization,'Bearer test-only-not-a-real-key');assert.equal((await store()).base,'https://custom.test/v1');
+  report.checks.push('Test Connection uses newly entered address, model and key without requiring separate saves');
+  await page.reload();await profile();assert.equal(await page.inputValue('#model-input'),'custom-model');assert.equal(await page.inputValue('#base-input'),'https://custom.test/v1');
+  await page.click('[data-tab="home"]');await page.click('[data-action="new-goal"]');await page.fill('[data-flow-initial="topic"]','函数');await page.click('[data-flow-action="begin"]');await page.click('[data-flow-pick="0"]');await page.click('[data-flow-pick="1"]');await page.waitForSelector('[data-flow-action="finish"]');await page.click('[data-flow-action="finish"]');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('zhizhi.v3')).goals[0]?.nodes.ch1n1?.status==='ready');
+  const stages=requests.map(r=>r.body.messages[0].content.match(/\[stage:(\w+)\]/)?.[1]);for(const stage of ['intake_questions','plan','blueprint','cards','review'])assert(stages.includes(stage));
+  assert(requests.every(r=>r.body.model==='custom-model'&&r.url==='https://custom.test/v1/chat/completions'));
+  report.checks.push('saved API configuration survives reload and drives follow-up, plan, cards and content-review requests');
+  await profile();mode='unauthorized';await page.fill('#key-input','invalid-test-key');await page.click('[data-action="test-key"]');await page.waitForFunction(()=>document.querySelector('#key-state').textContent.includes('401'));assert.equal((await store()).key,'test-only-not-a-real-key');
+  report.checks.push('401 connection error is visible and retains the previous working configuration');
+  mode='empty';await page.click('[data-action="test-key"]');await page.waitForFunction(()=>document.querySelector('#key-state').textContent.includes('有效的模型回答'));
+  report.checks.push('HTTP 200 without a valid model answer is rejected as a failed connection');
+  mode='ok';await page.fill('#key-input','test-only-not-a-real-key');await page.fill('#base-input','https://custom.test/v1/chat/completions');await page.click('[data-action="test-key"]');await page.waitForFunction(()=>document.querySelector('#key-state').textContent.includes('连接正常'));assert.equal(requests.at(-1).url,'https://custom.test/v1/chat/completions');
+  report.checks.push('full chat endpoint is accepted without adding a duplicated suffix');
+  const native=await browser.newPage({viewport:{width:390,height:844}});
+  await native.addInitScript(()=>{window.__native=[];window.ZhizhiAndroid={request(id,url,key,body){window.__native.push({url,key,body:JSON.parse(body)});setTimeout(()=>window.zhizhiHttpResult(id,{status:200,payload:{choices:[{message:{content:'好'}}]}}),5);}};});
+  native.on('pageerror',e=>report.pageErrors.push(e.message));
+  await native.goto(BASE);await native.click('[data-tab="me"]');await native.fill('#key-input','native-test-key');await native.fill('#model-input','native-model');await native.fill('#base-input','https://native.test/v1');await native.click('[data-action="test-key"]');await native.waitForFunction(()=>document.querySelector('#key-state').textContent.includes('连接正常'));
+  const captured=await native.evaluate(()=>window.__native);assert.equal(captured[0].url,'https://native.test/v1/chat/completions');assert.equal(captured[0].body.model,'native-model');
+  report.checks.push('Android native transport receives the same configured URL, key and payload (bridge simulated in Chromium)');
+  assert.deepEqual(report.pageErrors,[]);report.result='PASS';fs.writeFileSync(path.join(__dirname,'api-browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

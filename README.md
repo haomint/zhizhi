@@ -1,4 +1,27 @@
-# 知枝 · React + TypeScript
+# 知枝
+
+当前已归档网页主版本为 **1.0.1**。源码来自版本库的主版本快照，保留居中“要学什么”输入、选择题需求补问、连续阅读、上一张及跨已读小节回看，并包含 API 连接测试和 Android 原生 HTTPS 桥接。
+
+- [当前网页源码与运行说明](outputs/网页原型/知枝-v3/release/README.md)
+- [版本来源与归档记录](outputs/网页原型/知枝-v3/release/版本.json)
+- [Android 封装源码](outputs/网页原型/知枝-v3/release/android/README.md)：该主版对应 Android 1.1.1。源码不包含签名私钥或 APK。
+
+在仓库中运行：
+
+```bash
+cd outputs/网页原型/知枝-v3/release
+python3 -m http.server 4184
+```
+
+服务器启动后按终端显示的地址访问 `index.html`。该网页已包含运行所需资源，不需要先构建旧 React 工程。真实模型在个人中心自行配置。
+
+本次同步只纳入版本库主指针确认的 1.0.1；尚未整合的知识树、UI 等任务快照与本地后续修改不冒充新的主版本。原始 ZIP 的 SHA-256 为 `8ab111584a556aa604bc0c879e1f6aa3ec21e1db13e7ce73f21b88ba53b53820`，解压后逐文件核对归档清单。
+
+归档记录包含 44 项模拟接口浏览器场景；本次上传再次核对包与全部 19 个业务文件哈希、JavaScript/Python 语法及打包内容。真实模型调用和安卓真机安装尚未验证。
+
+以下保留原 React / TypeScript 应用的开发说明。它与当前网页主版分别维护。
+
+## 历史 React / TypeScript 应用
 
 知枝是手机本地运行的个人学习助手。正式应用已迁移为 **React + TypeScript + Vite + Capacitor**；学习、记忆、任务和 Pi 运行逻辑使用 TypeScript，安卓原生插件负责密钥、网络和系统分享。
 
@@ -30,7 +53,7 @@ Android 构建还需 JDK 21、Android API 36 和可读取的签名。APK 与源�
 
 ## 协作
 
-远程仓库：[Zhangchenhao-111/zhizhi](https://github.com/Zhangchenhao-111/zhizhi)（私有）。按任务创建 `feat/…`、`fix/…` 或 `refactor/…` 分支，说明验收条件，完成检查后通过 Pull Request 合入 `main`。多人或多个 Agent 使用独立克隆或 worktree。
+远程仓库：[haomint/zhizhi](https://github.com/haomint/zhizhi)（私有）。按任务创建 `feat/…`、`fix/…` 或 `refactor/…` 分支，说明验收条件，完成检查后通过 Pull Request 合入 `main`。多人或多个 Agent 使用独立克隆或 worktree。
 
 旧 Python 桌面实现已归档在 `outputs/learning-grove/legacy/`。当前应用入口为 `src/main.tsx`，不依赖电脑后台服务。`dist/` 和兼容旧预览的 `static/` 都是生成目录。
 
