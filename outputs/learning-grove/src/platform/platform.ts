@@ -28,7 +28,7 @@ interface PersonalPlugin {
     system: string;
     topic: string;
   }): Promise<unknown>;
-  searchMaterials(input: { query: string; pageid?: number }): Promise<unknown>;
+  searchMaterials(input: { query: string }): Promise<unknown>;
   exportBackup(input: { text: string }): Promise<void>;
 }
 const TAIL_SECTIONS =
@@ -126,13 +126,12 @@ export function createPlatform(): Platform {
             }),
       );
       // 导言通常只有几百字，为排名第一的条目补取全文；失败时保留导言。
+      // 安卓插件本轮不改，原生端仍只取导言。
       const pageid = Number(results[0]?.url.split("curid=")[1]);
-      if (pageid)
+      if (pageid && !native)
         try {
           const [full] = parseSearch(
-            native
-              ? await plugin.searchMaterials({ query, pageid })
-              : await wiki({ pageids: String(pageid) }),
+            await wiki({ pageids: String(pageid) }),
             true,
           );
           if (full && full.text.length > results[0].text.length)
