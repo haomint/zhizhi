@@ -46,9 +46,11 @@ export function testStats(sources: string[]): TestStats {
     skipped = 0;
   for (const s of sources) {
     tests += (s.match(/^\s*test\(/gm) || []).length;
+    // 只数行首的调用，避免把字符串里的示例算进去。
     skipped += (
-      s.match(/\btest\.(?:skip|todo|only)\(|\{\s*(?:skip|todo)\s*:\s*true/g) ||
-      []
+      s.match(
+        /^\s*test(?:\.(?:skip|todo|only)\(|\([^\n]*\{\s*(?:skip|todo|only)\s*:\s*true)/gm,
+      ) || []
     ).length;
   }
   return { tests, skipped };
