@@ -1,0 +1,55 @@
+name: 任务
+description: 一件需要有人认领去做的事（新功能、修复、文档、调研）
+labels: ["待认领"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        写给“领任务的人”看：他应该只读这一页就能开始做。认领规则见 AGENTS.md「工作流程」。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 为什么要做？对应策划案哪一段，或者发现了什么问题。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 要做什么
+      description: 具体范围，按条列出。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      description: 写成用户能操作的步骤：做什么 → 应该看到什么。最后一条通常是 npm run check 通过。
+      value: |
+        - [ ] 
+        - [ ] `npm run check` 通过
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: 不做什么
+      description: 明确边界，避免做多。
+  - type: dropdown
+    id: size
+    attributes:
+      label: 难度
+      description: 选完后请同时加对应的“难度”标签。
+      options:
+        - 小（约半天到一天）
+        - 中（约两到三天）
+        - 大（约一周，可分几次提交，由同一人负责）
+    validations:
+      required: true
+  - type: input
+    id: depends
+    attributes:
+      label: 依赖
+      description: 要先完成的任务编号，例如 #15；没有就写“无”。
+    validations:
+      required: true
