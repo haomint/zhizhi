@@ -22,3 +22,6 @@
 /outputs/知枝-手机预览.html
 /work/
 /outputs/pi-mobile-probe/www/
+
+# Local copy of the v3 reference page (see AGENTS.md)
+.v3-reference/
