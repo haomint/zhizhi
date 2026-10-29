@@ -16,6 +16,7 @@ import type {
   StageResults,
   KnowledgeResult,
   Card,
+  NodeStatus,
 } from "../contracts.ts";
 import {
   uid,
@@ -33,6 +34,14 @@ import {
 const PASSAGE_CHARS = 900,
   MATERIAL_BUDGET = 9000,
   MIN_PAGE_CHARS = 150;
+// 衔接只能把“已读”“已完成”当作用户学过；跳过和学习中不是阅读证据。
+const STATUS_LABELS: Record<NodeStatus, string> = {
+  unseen: "未学",
+  learning: "学习中",
+  read: "已读",
+  done: "已完成",
+  skipped: "已跳过",
+};
 function terms(text: string): Set<string> {
   const out = new Set<string>();
   for (const run of text.toLowerCase().match(/[一-鿿]+/g) || [])
@@ -112,7 +121,7 @@ export async function generate(
     route: {
       previous: t.nodes.slice(Math.max(0, index - 2), index).map((x) => ({
         title: x.title,
-        read: x.status !== "unseen",
+        status: STATUS_LABELS[x.status],
       })),
       next: t.nodes.slice(index + 1, index + 3).map((x) => x.title),
     },
@@ -215,6 +224,13 @@ export async function generate(
       };
       continue;
     }
+    // 重写一次后仍过短就不发布，保留旧内容。
+    requireThat(
+      !thin.length,
+      "重写后仍有页面过短：" +
+        thin.map((c) => `“${c.title}”`).join("、") +
+        "。请补充材料或缩小这一节的范围后重试。",
+    );
     progress("正在检查内容");
     quality = await ask("quality", { ...brief, knowledge, plan, cards });
     if (quality.decision === "pass") break;

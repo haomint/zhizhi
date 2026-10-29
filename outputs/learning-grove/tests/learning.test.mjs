@@ -159,6 +159,60 @@ test("thin pages get one program-side repair that does not use up the model revi
   assert.match(contexts[3].repair.issues[0].reason, /只有 4 字/);
   assert.ok(n.cards.every((c) => c.text.length >= 150));
 });
+test("pages still too short after the length retry are not published", async () => {
+  const s = state(),
+    t = s.trees[0],
+    n = t.nodes[0],
+    before = JSON.stringify(n),
+    calls = [];
+  const base = model(calls);
+  const short = {
+    cards: [
+      { node_id: "n", kind: "定义诠释", title: "函数", text: "唯一输出" },
+      { node_id: "n", kind: "例子", title: "例子", text: "f(3)=6" },
+    ],
+  };
+  await assert.rejects(
+    generate(
+      s,
+      t,
+      n,
+      async (stage, c) => {
+        const result = await base(stage, c);
+        return stage === "cards" ? short : result;
+      },
+      async () => [],
+    ),
+    /过短/,
+  );
+  assert.deepEqual(calls, ["knowledge", "page-plan", "cards", "cards"]);
+  assert.equal(JSON.stringify(n), before);
+});
+test("neighbor sections pass their real status, not a read flag", async () => {
+  const s = state(),
+    t = s.trees[0],
+    n = t.nodes[0];
+  t.nodes.unshift(
+    { ...structuredClone(n), id: "p1", title: "跳过的一节", status: "skipped" },
+    { ...structuredClone(n), id: "p2", title: "读过的一节", status: "read" },
+  );
+  let route;
+  const base = model([]);
+  await generate(
+    s,
+    t,
+    n,
+    async (stage, c) => {
+      if (stage === "cards") route = c.route;
+      return base(stage, c);
+    },
+    async () => [],
+  );
+  assert.deepEqual(route.previous, [
+    { title: "跳过的一节", status: "已跳过" },
+    { title: "读过的一节", status: "已读" },
+  ]);
+});
 test("material selection reads passages relevant to the node, not the opening", () => {
   const filler = "这一段讲的是天气和饮食，与主题无关。".repeat(60);
   const m = material({
