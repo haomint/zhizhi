@@ -33,7 +33,7 @@
 git fetch origin chore/upload-web-main-1.0.1
 mkdir -p .v3-reference
 git show "origin/chore/upload-web-main-1.0.1:outputs/网页原型/知枝-v3/release/index.html" > .v3-reference/index.html
-cd outputs/learning-grove && npx vite ../../.v3-reference --port 4184
+cd outputs/learning-grove && npx vite ../../.v3-reference --host 127.0.0.1 --port 4184 --strictPort
 ```
 
 浏览器打开 `http://localhost:4184/`。
@@ -123,8 +123,8 @@ ui/  ──▶  application/service.ts  ──▶  core/
 
 ## 多人协作
 
-团队 4 人，另有多个 AI agent 参与。`main` 只能通过 PR 合入，CI 的 `web` 检查
-通过后才能合并（GitHub 规则强制）。合并由有权限的成员（haomint、G-meng965）执行；
+团队 4 人，另有多个 AI agent 参与。`main` 只能通过 PR 合入，`web` 和 `guard` 检查
+都通过、代码审查讨论已处理后才能合并（GitHub 规则强制；不强制批准人数）。合并由有权限的成员（haomint、G-meng965）执行；
 AI agent 开的 PR，合并前由人类成员实际试用验收条件里的操作。
 
 避免冲突：
