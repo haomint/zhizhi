@@ -2,6 +2,11 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import assert from "node:assert/strict";
 const root = resolve(import.meta.dirname, "..");
+const guidanceBytes = readFileSync(resolve(root, "../../AGENTS.md")).byteLength;
+assert(
+  guidanceBytes <= 10000,
+  `AGENTS.md is ${guidanceBytes} bytes; move detailed rules out to stay within 10000 bytes.`,
+);
 const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")) as {
   version: string;
   scripts: Record<string, string>;

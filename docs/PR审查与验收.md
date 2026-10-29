@@ -1,0 +1,46 @@
+# 知枝 PR 审查与验收
+
+CI/PR Guard 自动检查固定规则，Codex GitHub 独立查错，作者或协助验收的 AI 用项目 skill 核对 Issue，最后由人试用并合并。作者也用 Codex 编码时，GitHub 上一次全新的审查执行仍有效；作者自查不算机器人结果。
+
+## 首次接入
+
+仓库负责人打开 [设置 → 编码 → 代码审查](https://chatgpt.com/settings/code-review)，连接并选择 `haomint/zhizhi`，开启自动审查，按界面配置触发条件和个人偏好。旧 `/codex/settings/code-review` 链接可能返回首页，应从设置导航进入。账号设置不在 Git 仓库里，文档不能证明已经启用。
+
+若列表为空，可从 [Codex 云端](https://chatgpt.com/settings/codex-cloud) 的“创建环境”仓库选择器进入“配置访问权限”。在 GitHub 官方 ChatGPT Codex Connector 安装页选择 Only select repositories，仅选 `haomint/zhizhi`；由账号持有人确认授权并完成需要的 GitHub 身份验证，再返回代码审查页。只为审查接入仓库时，不必创建额外的云端运行环境。
+
+用已有代码 PR 评论 `@codex review 请用中文审查，先读 AGENTS.md 和 REVIEW.md`。启动反应只表示接收，需等完成结果并确认对应 head SHA。保存原始结果链接；若补中文摘要，注明由谁补写，不能冒充机器人原文。无回应时检查仓库连接、权限、开关与额度，保留“待完成”，不改写成通过。
+
+main 的经典分支保护和 ruleset 可以同时生效，须同时核对 `web`、`guard` 和审查讨论处理要求；AI 不擅自修改仓库设置。
+
+## 每个 PR 怎么走
+
+1. 作者运行 `npm run check`，按模板填写 Issue、改动、证据、作者 AI 和未验证项；所需依赖先完成。
+2. 等当前提交的 `web`、`guard` 和 Codex GitHub 审查；未自动触发时评论 `@codex review`。
+3. 调用 `$zhizhi-review`，或要求 AI 读取 `.agents/skills/zhizhi-review/SKILL.md`，逐条核对 Issue 条件。skill 不重复 Guard 的固定规则。
+4. 每条意见回复“已修改”或“不修改及理由”。有代码行讨论时先处理再解决讨论，不能只点 Resolve。集中修改后再请求复审。
+5. 合并人确认：当前提交 CI/Guard 通过、机器人已审当前版本、没有未处理的必须修、Issue 证据和必要人工操作已完成、相关讨论已处理。最后由人合并。
+
+## 复审与轮次
+
+第一轮看完整 PR，第二轮起请求注明：“上轮已审 `<旧 head>`，当前 `<新 head>`，请只审新增改动，并核对旧问题处理。”新发现才列新问题，旧问题引用原记录。审查员每发一次意见算一轮，最多三轮；仍有实际问题则重新设计或拆小 PR。实际轮次与范围由合并人核对，提示词不能自动强制。
+
+## 验收记录
+
+```text
+PR / 关联 Issue：
+base / 当前 head / 上轮已审 head：
+轮次 / 核对者 / 是否作者自查：
+web / guard：链接及对应提交
+Codex GitHub 结果：原始链接及对应提交（没有则待完成）
+Issue 验收：逐条写“已做到 / 没做到 / 缺证据”，附证据
+意见处理：已修改 / 不修改及理由
+共 N 个本次问题（N=0 写“没有发现问题”；原有问题另列）
+给不懂代码的人看的总结：
+能合并。或 不能合并。随后解释原因，列尚需人工确认的入口、步骤、预期结果。
+```
+
+## 官方能力核实
+
+核实日期：2026-10-29。[OpenAI 官方说明](https://learn.chatgpt.com/docs/third-party/github)仍写明 GitHub 审查只报告 P0/P1，`AGENTS.md` 可用 `## Code Review Rules` 提供项目规则。机器人原始优先级保留，中文总结按 `REVIEW.md` 的三档解释；不能自行把重大问题降级。
+
+平台可能保留自己的报告格式，补写的中文摘要要链接原文并标明来源。项目规则和 skill 不保证平台自定义格式、三轮上限或自动合并；没有发现问题不代表真实模型和人工场景已验证。平台规则变化时重新核实并更新本节。
