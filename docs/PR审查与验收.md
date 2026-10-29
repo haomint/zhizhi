@@ -4,7 +4,9 @@ CI/PR Guard 自动检查固定规则，Codex GitHub 独立查错，作者或协�
 
 ## 首次接入
 
-仓库负责人在 [Codex 审查设置](https://chatgpt.com/codex/settings/code-review) 连接并选择 `haomint/zhizhi`，开启自动审查，按界面配置 Review trigger 和个人偏好。账号设置不在 Git 仓库里，文档不能证明已经启用。
+仓库负责人打开 [设置 → 编码 → 代码审查](https://chatgpt.com/settings/code-review)，连接并选择 `haomint/zhizhi`，开启自动审查，按界面配置触发条件和个人偏好。旧 `/codex/settings/code-review` 链接可能返回首页，应从设置导航进入。账号设置不在 Git 仓库里，文档不能证明已经启用。
+
+若列表为空，可从 [Codex 云端](https://chatgpt.com/settings/codex-cloud) 的“创建环境”仓库选择器进入“配置访问权限”。在 GitHub 官方 ChatGPT Codex Connector 安装页选择 Only select repositories，仅选 `haomint/zhizhi`；由账号持有人确认授权并完成需要的 GitHub 身份验证，再返回代码审查页。只为审查接入仓库时，不必创建额外的云端运行环境。
 
 用已有代码 PR 评论 `@codex review 请用中文审查，先读 AGENTS.md 和 REVIEW.md`。启动反应只表示接收，需等完成结果并确认对应 head SHA。保存原始结果链接；若补中文摘要，注明由谁补写，不能冒充机器人原文。无回应时检查仓库连接、权限、开关与额度，保留“待完成”，不改写成通过。
 
