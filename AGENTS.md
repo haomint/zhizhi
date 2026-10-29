@@ -130,6 +130,18 @@ AI agent 开的 PR，合并前由人类成员实际试用验收条件里的操�
 - 共享文件（`src/contracts.ts`、`AGENTS.md`、`package.json`）的改动尽量小、尽快合并。
 - PR 合并后删除分支，本地切回 `main` 并 `git pull`。
 
+### PR 审查与合并
+
+CI/Guard 做固定检查，Codex GitHub 独立查错；项目 skill [zhizhi-review](.agents/skills/zhizhi-review/SKILL.md) **只核对 Issue 验收条件与证据**。作者自查不算机器人审查，GitHub 上独立执行即可，不强制换厂商。
+
+审查员每发一次意见算一轮，最多三轮；第二轮起请求只看新改动，旧问题记录处理结果。每条回复“已修改”或“不修改及理由”，三轮仍有实际问题则重新设计或拆小 PR。轮次由人核对。
+
+合并人确认当前提交的 CI/Guard、机器人结果、意见处理、Issue 证据和必要人工验收；无机器人结果属于待完成。流程见 [PR 审查与验收](docs/PR审查与验收.md)。`AGENTS.md` 不超过 10000 UTF-8 字节（doctor 检查）。
+
+## Code Review Rules
+
+先读根目录 [REVIEW.md](REVIEW.md)，用中文审查，按“必须修 / 建议改 / 原有问题”解释具体出错场景，不报风格或猜测。合并建议不能代替测试和人工验收。
+
 ## 策划案维护
 
 - 日常讨论只在对话里推进，不逐条改策划案。
