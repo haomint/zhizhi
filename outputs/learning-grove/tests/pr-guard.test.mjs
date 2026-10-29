@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { checkPullRequest, testStats } from "../scripts/pr-guard.ts";
 
 const stats = { tests: 10, skipped: 0 };
@@ -77,6 +79,37 @@ test("test statistics count tests and skips", () => {
     testStats([
       'test("a", () => {});\n  test("b", () => {});',
       'test.skip("c", () => {});\ntest("d", { skip: true }, () => {});',
+    ]),
+    { tests: 3, skipped: 2 },
+  );
+});
+test("the unfilled PR template does not count as a test-reduction reason", () => {
+  const template = readFileSync(
+    resolve(import.meta.dirname, "../../../.github/pull_request_template.md"),
+    "utf8",
+  );
+  const fewer = { tests: 9, skipped: 0 };
+  assert.match(
+    checkPullRequest(pr({ body: template, head: fewer }))[0],
+    /10 个减少到 9 个/,
+  );
+  assert.equal(
+    checkPullRequest(pr({ body: "测试减少理由：……", head: fewer })).length,
+    1,
+  );
+});
+test("skip options on their own line are counted", () => {
+  assert.deepEqual(
+    testStats([
+      [
+        "test(",
+        '  "multi-line skip",',
+        "  { skip: true },",
+        "  () => {},",
+        ");",
+        'test("reasoned", { skip: "flaky on CI" }, () => {});',
+        'test("kept", { skip: false }, () => {});',
+      ].join("\n"),
     ]),
     { tests: 3, skipped: 2 },
   );

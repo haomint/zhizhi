@@ -27,7 +27,10 @@ const SECRETS: Array<[string, RegExp]> = [
 const KEY_LOG =
   /console\.(?:log|info|warn|error|debug)\([^)]*\b(?:api_?key|apiKey|secret|token|authorization)\b/i;
 const DOCS_ONLY = /^\s*-\s*\[[xX]\]\s*\*\*只改文档 \/ 测试 \/ CI\*\*/m;
-const TEST_REASON = /测试减少理由[:：]\s*\S/;
+// 理由不能只是模板里的占位符“……”或“...”。
+const TEST_REASON = /测试减少理由[:：][ \t]*(?![.…。]*[ \t]*$)\S/m;
+// PR 模板里的 <!-- 提示 --> 不是作者写的内容。
+const withoutComments = (body: string) => body.replace(/<!--[\s\S]*?-->/g, "");
 
 export interface TestStats {
   tests: number;
@@ -46,10 +49,11 @@ export function testStats(sources: string[]): TestStats {
     skipped = 0;
   for (const s of sources) {
     tests += (s.match(/^\s*test\(/gm) || []).length;
-    // 只数行首的调用，避免把字符串里的示例算进去。
+    // 只数行首的调用，避免把字符串里的示例算进去；选项对象可以分行书写，
+    // skip 的值可以是 true 或说明字符串，false 不算。
     skipped += (
       s.match(
-        /^\s*test(?:\.(?:skip|todo|only)\(|\([^\n]*\{\s*(?:skip|todo|only)\s*:\s*true)/gm,
+        /^\s*test(?:\.(?:skip|todo|only)\(|\(\s*(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)\s*,\s*\{[^}]*\b(?:skip|todo|only)\s*:(?!\s*false\b))/gm,
       ) || []
     ).length;
   }
@@ -58,7 +62,8 @@ export function testStats(sources: string[]): TestStats {
 
 export function checkPullRequest(pr: PullRequestInput): string[] {
   const problems: string[] = [];
-  if (DOCS_ONLY.test(pr.body)) {
+  const body = withoutComments(pr.body);
+  if (DOCS_ONLY.test(body)) {
     const product = pr.files.filter((f) =>
       PRODUCT_PATHS.some((p) => (p.endsWith("/") ? f.startsWith(p) : f === p)),
     );
@@ -67,7 +72,7 @@ export function checkPullRequest(pr: PullRequestInput): string[] {
         `PR 勾选了“只改文档 / 测试 / CI”，但改动了产品文件：${product.join("、")}。请取消勾选并补充说明，或撤回这些改动。`,
       );
   }
-  if (pr.head.tests < pr.base.tests && !TEST_REASON.test(pr.body))
+  if (pr.head.tests < pr.base.tests && !TEST_REASON.test(body))
     problems.push(
       `测试从 ${pr.base.tests} 个减少到 ${pr.head.tests} 个。若确需删除，请在 PR 描述中写一行“测试减少理由：……”。`,
     );
