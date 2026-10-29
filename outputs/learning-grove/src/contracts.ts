@@ -73,7 +73,12 @@ export interface QualityResult {
     | "burden",
     boolean
   >;
-  issues: Array<{ severity: "core" | "optional"; reason: string }>;
+  issues: Array<{
+    severity: "core" | "optional";
+    reason: string;
+    page_id?: string;
+    repair?: string;
+  }>;
 }
 export interface StrategyProposal {
   change: string;
