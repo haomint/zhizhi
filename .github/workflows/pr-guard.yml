@@ -1,0 +1,34 @@
+name: PR Guard
+
+# Rule-based checks that need the PR description and diff: docs-only box vs
+# changed files, fewer/skipped tests, secrets or key logging in added lines.
+# Re-runs when the description is edited, since the checks read it.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: PR 固定规则检查
+        working-directory: outputs/learning-grove
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: node scripts/pr-guard.ts

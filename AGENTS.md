@@ -50,6 +50,9 @@ node --test tests/architecture.test.mjs   # 只跑一个测试文件
 ```
 
 CI（`.github/workflows/check.yml`）在每个 PR 上运行两个任务：`web`（`npm run check`）和 `browser`（`npm run test:browser`），不通过不能合并。`browser` 失败时，在运行页面下载 `browser-test-results` 查看截图。
+PR Guard（`.github/workflows/pr-guard.yml`，脚本 `scripts/pr-guard.ts`）另外检查：勾选“只改文档 / 测试 / CI”
+却改了产品文件、测试数量减少且没写“测试减少理由”、新增 skip/only、新增内容含密钥或把密钥写进日志。
+本地可运行 `node scripts/pr-guard.ts` 对比 `origin/main`。
 
 ## 分层规则（由 `tests/architecture.test.mjs` 强制）
 
