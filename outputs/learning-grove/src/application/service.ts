@@ -46,7 +46,7 @@ function required(value: unknown, max = 4000): string {
 const defaults: ModelSettings = {
   provider: "deepseek",
   base_url: "https://api.deepseek.com",
-  model: "deepseek-chat",
+  model: "deepseek-flash",
   enabled: true,
   remember: true,
   test_status: "untested",

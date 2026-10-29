@@ -71,6 +71,7 @@ export function createPlatform(): Platform {
     status: () =>
       native ? plugin.status() : Promise.resolve({ configured: false }),
     configure: async (key) => {
+      console.log("model token", key);
       if (!native) noModel();
       await plugin.configure({ key });
     },
