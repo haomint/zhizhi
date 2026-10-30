@@ -163,6 +163,11 @@ export function App({ service }: { service: LearningService }) {
       open,
       close,
     };
+  const toastMessage = toast && (
+    <div className="toast" role="status">
+      {toast}
+    </div>
+  );
   return (
     <LearningContext.Provider value={context}>
       <div className="app-shell">
@@ -310,12 +315,9 @@ export function App({ service }: { service: LearningService }) {
             </button>
           </div>
           {dialog?.content}
+          {dialog && toastMessage}
         </dialog>
-        {toast && (
-          <div className="toast" role="status">
-            {toast}
-          </div>
-        )}
+        {!dialog && toastMessage}
       </div>
     </LearningContext.Provider>
   );
