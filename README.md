@@ -4,6 +4,7 @@
 
 - [正式应用源码与开发入口](outputs/learning-grove/README.md)：当前版本 1.1.0。
 - [工程架构与开发规范](docs/工程架构与开发规范.md)：目录职责、接口和检查命令。
+- [依赖安全记录](docs/依赖安全记录.md)：`npm audit` 提醒的评估结论；不要运行 `npm audit fix --force`。
 - [产品策划与网页迭代方案](docs/知枝-产品策划与网页迭代方案.md)：当前有效的产品策划；[MVP 策划案](outputs/知枝-MVP完整策划案.md)作为历史参考。
 - [AGENTS.md](AGENTS.md)：AI 编程助手与开发者共用的仓库规则、分层约束和工作流程。
 - [1.1 使用与验收说明](outputs/知枝-1.1使用与验收说明.md)。

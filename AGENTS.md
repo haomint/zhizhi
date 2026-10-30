@@ -17,6 +17,7 @@
 | --- | --- |
 | [docs/知枝-产品策划与网页迭代方案.md](docs/知枝-产品策划与网页迭代方案.md) | **最新产品策划（以此为准）**：体验流程、本轮范围、开发关键点 |
 | [docs/工程架构与开发规范.md](docs/工程架构与开发规范.md) | 模块职责、数据兼容、验证证据 |
+| [docs/依赖安全记录.md](docs/依赖安全记录.md) | `npm audit` 提醒的评估结论与复查条件 |
 | [outputs/learning-grove/README.md](outputs/learning-grove/README.md) | 正式应用的模块清单与运行方式 |
 | `outputs/知枝-*.md` | 历史策划与验收记录，只作参考；与最新策划冲突时以最新策划为准 |
 
@@ -146,5 +147,6 @@ AI agent 开的 PR，合并前由人类成员实际试用验收条件里的操�
 - 不修改 `legacy/`、`experiments/`、`outputs/pi-mobile-probe/`、`android/`（本轮）。
 - 不为了让检查通过而删测试、放宽类型或改架构测试；先修代码，确需改规则时在 PR 里写明理由。
 - 不提交 `node_modules/`、`dist/`、签名文件、数据库和安装包。
+- 不运行 `npm audit fix --force`；安全提醒按 `docs/依赖安全记录.md` 评估。
 - AI agent 不认领任务，只做认领人明确交给它的任务；不合并、不批准 PR，不修改仓库设置和分支规则。
   被要求整理任务时，只开 Issue（不设 Assignee、加 `待认领`），不自己去做。
