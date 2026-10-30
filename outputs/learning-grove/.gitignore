@@ -13,3 +13,4 @@ public/skills/
 public/CAPACITOR-ANDROID-LICENSE.txt
 .static-build-*/
 verification-react/failure.*
+test-results/

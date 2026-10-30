@@ -15,11 +15,11 @@ npm run check
 `check` 依次执行 Prettier 检查、32 项自动测试（含 `tests/architecture.test.mjs` 分层检查）、TS 类型检查、Vite 生产构建和工程核对。每项测试覆盖现有学习行为或迁移风险，不把编译通过当成学习效果证明。
 
 ```bash
-npm run preview -- --port 5175
-node scripts/verify_react.cjs
+npx playwright install chromium   # 首次运行前安装浏览器
+npm run test:browser
 ```
 
-浏览器脚本需要 Playwright 与 Chromium。本工作区可使用预装 Playwright；其他环境先安装对应工具。浏览器检查前完成构建，检查过程中不要重建资源。默认验证地址为 `http://localhost:5175/`，可通过 `ZHIZHI_URL` 修改。
+`test:browser` 先构建，再用 Vite 预览服务在 `127.0.0.1:5175` 运行 13 项 Playwright 场景（演示树阅读、材料、反馈记忆、加强、档案导入导出、离线阅读、无横向溢出），结束后关闭服务。截图与报告写入被忽略的 `test-results/browser/`；失败时另有 `failure.png` 和 `failure.json`。端口可用 `ZHIZHI_PORT` 修改。CI 的 `browser` 任务在每个 PR 上运行同一检查，失败时可在该次运行页面下载 `browser-test-results`。
 
 ## 模块
 

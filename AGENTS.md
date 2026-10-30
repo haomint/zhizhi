@@ -63,10 +63,11 @@ npm ci              # 安装依赖（Node.js 24+）
 npm run dev         # 开发服务器
 npm run format      # Prettier 自动格式化
 npm run check       # 提交前必跑：格式 + 测试 + 类型检查 + 构建 + doctor
+npm run test:browser  # 改了界面时跑：13 项浏览器场景（首次先 npx playwright install chromium）
 node --test tests/architecture.test.mjs   # 只跑一个测试文件
 ```
 
-CI（`.github/workflows/check.yml`）在每个 PR 上执行同一条 `npm run check`，不通过不能合并。
+CI（`.github/workflows/check.yml`）在每个 PR 上运行两个任务：`web`（`npm run check`）和 `browser`（`npm run test:browser`），不通过不能合并。`browser` 失败时，在运行页面下载 `browser-test-results` 查看截图。
 PR Guard（`.github/workflows/pr-guard.yml`，脚本 `scripts/pr-guard.ts`）另外检查：勾选“只改文档 / 测试 / CI”
 却改了产品文件、测试数量减少且没写“测试减少理由”、新增 skip/only、新增内容含密钥或把密钥写进日志。
 本地可运行 `node scripts/pr-guard.ts` 对比 `origin/main`。

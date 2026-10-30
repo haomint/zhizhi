@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-let playwright;try{playwright=require('playwright');}catch{playwright=require('/usr/local/lib/node_modules/playwright');}
+const playwright=require('playwright');
 (async()=>{
- const root=path.resolve(__dirname,'..'),output=path.join(root,'verification-react');fs.mkdirSync(output,{recursive:true});
+ const root=path.resolve(__dirname,'..'),output=process.env.ZHIZHI_REPORT_DIR?path.resolve(process.env.ZHIZHI_REPORT_DIR):path.join(root,'verification-react');fs.mkdirSync(output,{recursive:true});
  const browser=await playwright.chromium.launch({headless:true,args:['--no-sandbox']}),context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,acceptDownloads:true}),page=await context.newPage();
  const errors=[],cases=[];page.on('pageerror',error=>errors.push(error.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const pass=name=>cases.push({name,passed:true});
