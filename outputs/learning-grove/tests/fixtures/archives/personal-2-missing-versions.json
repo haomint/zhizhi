@@ -1,0 +1,192 @@
+{
+  "format": "zhizhi-personal-2",
+  "exported_at": "2026-10-01T09:00:00.000Z",
+  "state": {
+    "schema_version": 2,
+    "revision": 7,
+    "event_seq": 3,
+    "trees": [
+      {
+        "id": "tree-functions",
+        "title": "兼容测试：函数学习",
+        "goal": "理解函数与线性函数（虚构目标）",
+        "description": "只用于兼容测试，不是真实学习记录。",
+        "preferences": {
+          "target": "理解",
+          "difficulty": "基础",
+          "detail": "完整",
+          "style": "先例子",
+          "guidance": "自主阅读"
+        },
+        "created": "2026-10-01T09:00:00.000Z",
+        "updated": "2026-10-01T09:00:00.000Z",
+        "demo": true,
+        "current_node_id": "node-linear",
+        "materials": [
+          {
+            "id": "material-functions",
+            "title": "虚构讲义",
+            "text": "函数为每个允许的输入确定唯一输出；f(x)=2x 时 f(3)=6。",
+            "url": "",
+            "location": "自编测试材料",
+            "kind": "user",
+            "license": "测试用虚构文本",
+            "at": "2026-10-01T09:00:00.000Z"
+          }
+        ],
+        "sources": [
+          {
+            "id": "material-functions",
+            "title": "虚构讲义",
+            "url": "",
+            "location": "自编测试材料",
+            "kind": "user",
+            "license": "测试用虚构文本"
+          }
+        ],
+        "source_status": "测试演示内容",
+        "settled_through": 2,
+        "auto_prepare": false,
+        "search_enabled": false,
+        "route_history": [],
+        "route_proposal": null,
+        "nodes": [
+          {
+            "id": "node-functions",
+            "title": "函数的定义",
+            "description": "虚构档案兼容样本",
+            "chapter": "函数基础",
+            "parent_id": "",
+            "status": "read",
+            "ready": true,
+            "page": 0,
+            "reinforcement": null,
+            "messages": [],
+            "links": [],
+            "content_history": [],
+            "cards": [
+              {
+                "id": "node-functions-definition",
+                "node_id": "node-functions",
+                "kind": "定义",
+                "title": "函数的定义：定义",
+                "text": "函数把每个允许的输入对应到唯一输出。",
+                "image": ""
+              },
+              {
+                "id": "node-functions-example",
+                "node_id": "node-functions",
+                "kind": "例子",
+                "title": "函数的定义：例子",
+                "text": "当 f(x)=2x，输入 3 时，输出 6。",
+                "image": ""
+              }
+            ]
+          },
+          {
+            "id": "node-linear",
+            "title": "线性函数",
+            "description": "虚构档案兼容样本",
+            "chapter": "函数基础",
+            "parent_id": "",
+            "status": "learning",
+            "ready": true,
+            "page": 1,
+            "reinforcement": null,
+            "messages": [],
+            "links": [],
+            "content_history": [],
+            "cards": [
+              {
+                "id": "node-linear-definition",
+                "node_id": "node-linear",
+                "kind": "定义",
+                "title": "线性函数：定义",
+                "text": "函数把每个允许的输入对应到唯一输出。",
+                "image": ""
+              },
+              {
+                "id": "node-linear-example",
+                "node_id": "node-linear",
+                "kind": "例子",
+                "title": "线性函数：例子",
+                "text": "当 f(x)=2x，输入 3 时，输出 6。",
+                "image": ""
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "memories": [
+      {
+        "id": "memory-examples",
+        "category": "讲法偏好",
+        "content": "请保留例子的计算过程（虚构偏好）。",
+        "tree_id": "tree-functions",
+        "node_id": "node-linear",
+        "source": "用户明确反馈（测试）",
+        "updated": "2026-10-01T09:00:00.000Z",
+        "event_ids": ["event-feedback"]
+      }
+    ],
+    "events": [
+      {
+        "id": "event-read",
+        "seq": 1,
+        "type": "read",
+        "tree_id": "tree-functions",
+        "node_id": "node-functions",
+        "content": "读完函数定义（测试）",
+        "at": "2026-10-01T09:00:00.000Z",
+        "content_version": 2
+      },
+      {
+        "id": "event-feedback",
+        "seq": 2,
+        "type": "feedback",
+        "tree_id": "tree-functions",
+        "node_id": "node-linear",
+        "content": "请保留例子的计算过程（虚构偏好）。",
+        "at": "2026-10-01T09:00:00.000Z",
+        "content_version": 4
+      },
+      {
+        "id": "event-page",
+        "seq": 3,
+        "type": "read",
+        "tree_id": "tree-functions",
+        "node_id": "node-linear",
+        "content": "阅读到例子页（测试）",
+        "at": "2026-10-01T09:00:00.000Z",
+        "content_version": 4
+      }
+    ],
+    "tombstones": [],
+    "strategies": [
+      {
+        "id": "strategy-steps",
+        "tree_id": "tree-functions",
+        "content": "保留计算过程",
+        "reason": "虚构用户明确要求",
+        "event_ids": ["event-feedback"],
+        "at": "2026-10-01T09:00:00.000Z"
+      }
+    ],
+    "settlements": [
+      {
+        "id": "settlement-feedback",
+        "tree_id": "tree-functions",
+        "through": 2,
+        "observations": 1,
+        "strategies": 1,
+        "at": "2026-10-01T09:00:00.000Z"
+      }
+    ],
+    "tasks": [],
+    "draft": {
+      "messages": [],
+      "summary": null
+    }
+  }
+}
