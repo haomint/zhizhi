@@ -119,13 +119,16 @@ function environment() {
               node_id: context.nodes?.[0].id,
               kind: "定义诠释",
               title: "函数",
-              text: "每个允许输入有唯一输出",
+              text:
+                "每个允许输入有唯一输出" +
+                "。函数把定义域里的每个输入对应到唯一的输出".repeat(8),
             },
             {
               node_id: context.nodes?.[0].id,
               kind: "例子",
               title: "数字例子",
-              text: "f(3)=2×3=6",
+              text:
+                "f(3)=2×3=6" + "。规则 f(x)=2x 把输入乘以 2 得到输出".repeat(8),
             },
           ],
         },
